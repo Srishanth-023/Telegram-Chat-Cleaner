@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { clsx } from "clsx";
 import { ShieldCheck, LogOut, Trash2, UserCheck, ChevronDown } from "@/components/ui/Icons";
 import { getSessionState, subscribeSession, clearInMemorySession } from "@/lib/session/store";
 import { disconnectClient } from "@/lib/telegram/client";
@@ -100,40 +101,60 @@ export function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 text-xs font-medium text-text-muted">
-            <Link href="/about" className="hover:text-text transition-colors">
-              About
-            </Link>
-            <Link href="/privacy" className="hover:text-text transition-colors">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-text transition-colors">
-              Terms
-            </Link>
-            <Link href="/license" className="hover:text-text transition-colors">
-              License
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            {session.isConnected && displayName ? (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsDisconnectOpen(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-control border border-border bg-surface hover:bg-surface-muted transition-colors text-xs font-medium text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                >
-                  <UserCheck className="w-3.5 h-3.5 text-success" />
-                  <span className="hidden sm:inline font-mono">{displayName}</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
-                </button>
-              </div>
-            ) : pathname !== "/connect" && (
-              <Link href="/connect">
-                <Button size="sm" variant="primary">
-                  Connect Account
-                </Button>
+          {/* Right-aligned Navigation Links and Actions */}
+          <div className="flex items-center gap-6">
+            <nav className="flex items-center gap-5 sm:gap-6 text-xs font-medium text-text-muted">
+              <Link
+                href="/about"
+                className={clsx(
+                  "hover:text-text transition-colors",
+                  pathname === "/about" && "text-primary font-semibold"
+                )}
+              >
+                About
               </Link>
-            )}
+              <Link
+                href="/privacy"
+                className={clsx(
+                  "hover:text-text transition-colors",
+                  pathname === "/privacy" && "text-primary font-semibold"
+                )}
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className={clsx(
+                  "hover:text-text transition-colors",
+                  pathname === "/terms" && "text-primary font-semibold"
+                )}
+              >
+                Terms
+              </Link>
+            </nav>
+
+            <div className="h-4 w-px bg-border hidden sm:block" />
+
+            <div className="flex items-center gap-3">
+              {session.isConnected && displayName ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsDisconnectOpen(true)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-control border border-border bg-surface hover:bg-surface-muted transition-colors text-xs font-medium text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <UserCheck className="w-3.5 h-3.5 text-success" />
+                    <span className="hidden sm:inline font-mono">{displayName}</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
+                  </button>
+                </div>
+              ) : pathname !== "/connect" && (
+                <Link href="/connect">
+                  <Button size="sm" variant="primary">
+                    Connect Account
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </header>

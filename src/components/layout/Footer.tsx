@@ -26,10 +26,6 @@ export function Footer() {
             Terms of Service
           </Link>
 
-          <Link href="/license" className="hover:text-text transition-colors">
-            License
-          </Link>
-
           <a
             href="https://github.com/Srishanth-023/Telegram-Chat-Cleaner"
             target="_blank"

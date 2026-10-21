@@ -257,8 +257,8 @@ export default function HomePage() {
               <span>How is my session and login data handled?</span>
               <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
             </summary>
-            <p className="mt-3 text-xs text-text-muted leading-relaxed">
-              By default, your credentials exist solely in browser RAM during your active session. When you close or refresh the tab, all in-memory keys and sessions disappear. If you explicitly choose &quot;Remember me&quot;, your session is encrypted using AES-GCM via the Web Crypto API with a non-extractable key in your browser&apos;s IndexedDB. No passwords or hashes are saved in localStorage or sent to any remote server.
+            <p className="mt-2.5 text-xs text-text-muted leading-relaxed">
+              All credentials stay strictly in your browser memory and are never sent to any server. When you close the tab, everything is erased immediately. If you enable &quot;Remember me&quot;, the session is encrypted locally on your device using native WebCrypto.
             </p>
           </details>
 
@@ -267,8 +267,8 @@ export default function HomePage() {
               <span>Will the other person see that I deleted our chat?</span>
               <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
             </summary>
-            <p className="mt-3 text-xs text-text-muted leading-relaxed">
-              No. Telegram offers two ways to delete chats: for yourself only, or for both parties. Telegram Chat Cleaner exclusively uses the user-only method (<code className="font-mono text-text">revoke: false</code>). The chat disappears from your dialog list and chat history, but the other participant&apos;s copy remains intact.
+            <p className="mt-2.5 text-xs text-text-muted leading-relaxed">
+              No. Deletions apply strictly to your own account view (<code className="font-mono text-text">revoke: false</code>). All messages remain completely intact for the other person or group members.
             </p>
           </details>
 
@@ -277,8 +277,18 @@ export default function HomePage() {
               <span>What happens if I remove a channel or group I own?</span>
               <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
             </summary>
-            <p className="mt-3 text-xs text-text-muted leading-relaxed">
-              For groups and channels, removing a chat calls <code className="font-mono text-text">LeaveChannel</code> or <code className="font-mono text-text">DeleteChatUser</code>. Leaving does not delete the group or channel for its members or subscribers; they will continue to see and interact with it. The app flags owned chats with warning badges in your review list.
+            <p className="mt-2.5 text-xs text-text-muted leading-relaxed">
+              You will leave the chat and it will disappear from your account. The chat continues to exist normally for all other members and subscribers.
+            </p>
+          </details>
+
+          <details className="group border border-border rounded bg-surface p-4 transition-colors open:bg-surface-muted/40">
+            <summary className="font-semibold text-sm text-text cursor-pointer list-none flex items-center justify-between">
+              <span>Can I undo a chat removal?</span>
+              <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
+            </summary>
+            <p className="mt-2.5 text-xs text-text-muted leading-relaxed">
+              No. Removals are permanent on your account. To converse again, you will need to start a new chat or rejoin using an invite link.
             </p>
           </details>
         </div>
