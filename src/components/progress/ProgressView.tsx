@@ -23,7 +23,6 @@ import { disconnectClient } from "@/lib/telegram/client";
 import { forgetDevice } from "@/lib/session/persist";
 import { clearInMemorySession } from "@/lib/session/store";
 import { isAuthenticated } from "@/lib/security/guards";
-import { Api } from "telegram";
 import { getClient } from "@/lib/telegram/client";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -202,6 +201,7 @@ export function ProgressView() {
       const client = getClient();
       if (client && client.connected) {
         try {
+          const { Api } = await import("telegram");
           await client.invoke(new Api.auth.LogOut());
         } catch {
           // Ignore

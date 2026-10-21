@@ -1,6 +1,4 @@
-import { TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { Logger, LogLevel } from "telegram/extensions/Logger";
+import type { TelegramClient } from "telegram";
 import { z } from "zod";
 
 export const telegramCredentialsSchema = z.object({
@@ -23,10 +21,6 @@ export type TelegramCredentials = {
 
 let clientSingleton: TelegramClient | null = null;
 let currentApiCredentials: { apiId: number; apiHash: string } | null = null;
-
-// Suppress all GramJS internal logs to ensure no credentials or tokens are logged
-const silentLogger = new Logger(LogLevel.NONE);
-silentLogger.log = () => {};
 
 export function getClient(): TelegramClient | null {
   return clientSingleton;
@@ -58,6 +52,16 @@ export async function createTelegramClient(
     }
     clientSingleton = null;
   }
+
+  // Dynamically load GramJS only when establishing connection
+  const [{ TelegramClient }, { StringSession }, { Logger, LogLevel }] = await Promise.all([
+    import("telegram"),
+    import("telegram/sessions"),
+    import("telegram/extensions/Logger"),
+  ]);
+
+  const silentLogger = new Logger(LogLevel.NONE);
+  silentLogger.log = () => {};
 
   const session = new StringSession(sessionString);
   const client = new TelegramClient(session, parsed.apiId, parsed.apiHash, {

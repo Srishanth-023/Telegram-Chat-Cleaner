@@ -1,4 +1,4 @@
-import { Api } from "telegram";
+import type { Api } from "telegram";
 import type { TelegramClient } from "telegram";
 import type { Dialog } from "telegram/tl/custom/dialog";
 import { requireClient } from "./client";
