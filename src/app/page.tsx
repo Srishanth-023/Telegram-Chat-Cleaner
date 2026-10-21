@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/Badge";
 
 export default function HomePage() {
   return (
-    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-16 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-16 pb-24 sm:pb-16 w-full">
       {/* Hero Section */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary-soft text-primary text-xs font-semibold mb-6 border border-primary/20">
@@ -152,33 +152,41 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 2-Column Architecture & Guarantee Panel (Not 3 in a row) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16 text-left">
-        <Card className="bg-surface border-border">
+      {/* 3 Trust Points (Stacked as cards on mobile, 3-col on desktop) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16 text-left">
+        <Card className="bg-surface border-border p-5">
           <div className="w-9 h-9 rounded bg-primary-soft text-primary flex items-center justify-center mb-3">
             <Lock className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-semibold text-text mb-1.5">Direct Browser Connection</h3>
+          <h3 className="text-base font-semibold text-text mb-1.5">Runs in Your Browser</h3>
           <p className="text-xs text-text-muted leading-relaxed">
-            All MTProto requests are transmitted directly from your web browser to Telegram WebSocket endpoints.
-            No server proxy, external database, telemetry SDK, or intermediary touches your credentials.
+            All MTProto requests connect directly to Telegram WebSocket endpoints. Zero server proxies, databases, or analytics.
           </p>
         </Card>
 
-        <Card className="bg-surface border-border">
+        <Card className="bg-surface border-border p-5">
           <div className="w-9 h-9 rounded bg-emerald-100 text-success flex items-center justify-center mb-3">
             <UserX className="w-4 h-4" />
           </div>
           <h3 className="text-base font-semibold text-text mb-1.5">Never Deletes for Others</h3>
           <p className="text-xs text-text-muted leading-relaxed">
-            Every removal operation enforces the strict parameter <code className="font-mono text-text bg-surface-muted px-1 py-0.5 rounded">revoke: false</code>.
-            Conversations disappear solely from your personal account view while remaining intact for counterparties.
+            Hardcodes <code className="font-mono text-text bg-surface-muted px-1 py-0.5 rounded">revoke: false</code>. Removals apply strictly to your personal account view.
+          </p>
+        </Card>
+
+        <Card className="bg-surface border-border p-5">
+          <div className="w-9 h-9 rounded bg-blue-100 text-primary flex items-center justify-center mb-3">
+            <Code2 className="w-4 h-4" />
+          </div>
+          <h3 className="text-base font-semibold text-text mb-1.5">Open Source & Inspectable</h3>
+          <p className="text-xs text-text-muted leading-relaxed">
+            100% client-side TypeScript code. Auditable architecture with zero telemetry or hidden network calls.
           </p>
         </Card>
       </div>
 
-      {/* Step-by-Step Credentials Guide (Vertical sequential list) */}
-      <Card className="mb-16 text-left border-border bg-surface">
+      {/* Step-by-Step Credentials Guide (Numbered Accordion) */}
+      <Card className="mb-16 text-left border-border bg-surface p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
           <div>
             <h2 className="text-lg font-bold text-text">How to Get Your Telegram API Credentials</h2>
@@ -191,53 +199,62 @@ export default function HomePage() {
           </Badge>
         </div>
 
-        <div className="space-y-4 pt-6">
-          <div className="p-4 border border-border rounded bg-surface-muted/30 flex items-start gap-3">
-            <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
-              1
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-text mb-0.5">Sign in to my.telegram.org</h4>
-              <p className="text-xs text-text-muted leading-relaxed mb-1.5">
-                Open Telegram&apos;s developer portal and sign in with your phone number and SMS code.
-              </p>
+        <div className="space-y-3 pt-5">
+          <details open className="group border border-border rounded bg-surface-muted/30 p-3.5 transition-colors">
+            <summary className="font-semibold text-sm text-text cursor-pointer list-none flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
+                  1
+                </div>
+                <span>Sign in to my.telegram.org</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
+            </summary>
+            <div className="mt-2.5 pl-9 text-xs text-text-muted leading-relaxed">
+              <p className="mb-2">Open Telegram&apos;s developer portal and sign in with your phone number and confirmation code.</p>
               <a
                 href="https://my.telegram.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-primary font-medium inline-flex items-center gap-1 hover:underline"
+                className="text-primary font-medium inline-flex items-center gap-1 hover:underline"
               >
                 my.telegram.org <ExternalLink className="w-3 h-3" />
               </a>
             </div>
-          </div>
+          </details>
 
-          <div className="p-4 border border-border rounded bg-surface-muted/30 flex items-start gap-3">
-            <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
-              2
+          <details open className="group border border-border rounded bg-surface-muted/30 p-3.5 transition-colors">
+            <summary className="font-semibold text-sm text-text cursor-pointer list-none flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
+                  2
+                </div>
+                <span>Create an API Application</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
+            </summary>
+            <div className="mt-2.5 pl-9 text-xs text-text-muted leading-relaxed">
+              Click <strong>API development tools</strong>. Enter an App title (e.g. <em>MyCleaner</em>) and short name, select Desktop or Web, and submit.
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-text mb-0.5">Create an API Application</h4>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Click <strong>API development tools</strong>. Enter an App title (e.g. <em>MyCleaner</em>) and short name, select Desktop or Web, and submit.
-              </p>
-            </div>
-          </div>
+          </details>
 
-          <div className="p-4 border border-border rounded bg-surface-muted/30 flex items-start gap-3">
-            <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
-              3
+          <details open className="group border border-border rounded bg-surface-muted/30 p-3.5 transition-colors">
+            <summary className="font-semibold text-sm text-text cursor-pointer list-none flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
+                  3
+                </div>
+                <span>Copy App ID and App Hash</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-text-muted group-open:rotate-90 transition-transform" />
+            </summary>
+            <div className="mt-2.5 pl-9 text-xs text-text-muted leading-relaxed">
+              Copy your numeric <strong>App api_id</strong> and 32-character hexadecimal <strong>App api_hash</strong> into the connection wizard.
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-text mb-0.5">Copy App ID and App Hash</h4>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Copy your numeric <strong>App api_id</strong> and 32-character hexadecimal <strong>App api_hash</strong> into the connection wizard.
-              </p>
-            </div>
-          </div>
+          </details>
         </div>
 
-        <div className="mt-6 p-3 rounded bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+        <div className="mt-5 p-3 rounded bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
           <Radio className="w-4 h-4 text-warning shrink-0 mt-0.5" />
           <span>
             <strong>Note on login notices:</strong> Telegram will send you an official security alert: &quot;A new login occurred on Telegram Web&quot;. This is standard and confirms that your browser established a direct connection.
@@ -297,6 +314,14 @@ export default function HomePage() {
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
+      </div>
+
+      {/* Sticky Bottom "Get Started" Bar for Mobile */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 p-3 bg-surface/95 border-t border-border pb-safe">
+        <Button href="/connect" size="lg" className="w-full font-semibold">
+          Get Started
+          <ArrowRight className="w-4 h-4 ml-1.5" />
+        </Button>
       </div>
     </main>
   );

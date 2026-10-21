@@ -6,7 +6,7 @@ test.describe("Onboarding Page (Landing)", () => {
 
     // Verify title and main headings
     await expect(page).toHaveTitle(/Telegram Chat Cleaner/i);
-    await expect(page.locator("h1")).toContainText(/Bulk Remove Unwanted Telegram Conversations/i);
+    await expect(page.locator("h1")).toContainText(/Clean unwanted Telegram chats/i);
 
     // Verify 3-point trust panel
     await expect(page.locator("text=Runs in Your Browser")).toBeVisible();
@@ -15,10 +15,10 @@ test.describe("Onboarding Page (Landing)", () => {
 
     // Verify step-by-step guide to get credentials
     await expect(page.locator("text=How to Get Your Telegram API Credentials")).toBeVisible();
-    await expect(page.locator("text=my.telegram.org")).toBeVisible();
+    await expect(page.locator("text=my.telegram.org").first()).toBeVisible();
 
     // Verify "Get Started" CTA navigates to /connect
-    const getStartedBtn = page.getByRole("link", { name: /get started/i });
+    const getStartedBtn = page.getByRole("link", { name: /get started/i }).first();
     await expect(getStartedBtn).toBeVisible();
     await getStartedBtn.click();
 

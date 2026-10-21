@@ -45,14 +45,24 @@ describe("ReviewView Confirmation Gating", () => {
     useAppStore.getState().selectAllFiltered(["101", "102"]);
   });
 
-  it("destructive removal button stays disabled until checkbox AND REMOVE text are entered", () => {
+  it("destructive removal button stays disabled until consequences details are read, checkbox checked, AND REMOVE text entered", () => {
     render(<ReviewView />);
 
     const removeBtn = screen.getByRole("button", { name: /Remove 2 Conversations/i });
     expect(removeBtn).toBeDisabled();
 
-    // Check only the checkbox
+    // Checkbox and input are disabled before reading details
     const checkbox = screen.getByRole("checkbox");
+    expect(checkbox).toBeDisabled();
+
+    // Click "Read details"
+    const readDetailsBtn = screen.getByRole("button", { name: /Read details/i });
+    fireEvent.click(readDetailsBtn);
+
+    // Now checkbox should be enabled
+    expect(checkbox).not.toBeDisabled();
+
+    // Check only the checkbox
     fireEvent.click(checkbox);
     expect(removeBtn).toBeDisabled();
 

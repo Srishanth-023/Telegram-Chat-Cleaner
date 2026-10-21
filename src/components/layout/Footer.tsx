@@ -4,7 +4,7 @@ import { Lock, Github, ExternalLink } from "@/components/ui/Icons";
 
 export function Footer() {
   return (
-    <footer className="w-full border-t border-border bg-surface py-6 px-4 sm:px-8 lg:px-12 text-xs text-text-muted mt-auto">
+    <footer className="w-full border-t border-border bg-surface py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] px-4 sm:px-8 lg:px-12 text-xs text-text-muted mt-auto">
       <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-center md:text-left">
           <Lock className="w-4 h-4 text-primary shrink-0" />

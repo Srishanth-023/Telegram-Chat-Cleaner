@@ -45,13 +45,13 @@ test.describe("Full Application Workflow (E2E)", () => {
     await expect(page.locator("text=Phone Number (International Format)")).toBeVisible();
 
     // Fill invalid phone format
-    const phoneInput = page.getByPlaceholder(/e\.g\. \+1 234 567 8900/i);
+    const phoneInput = page.getByLabel(/phone number/i);
     await phoneInput.fill("123"); // missing + prefix
 
-    const sendCodeBtn = page.getByRole("button", { name: /send verification code/i });
+    const sendCodeBtn = page.getByRole("button", { name: /(request|send) verification code/i });
     await sendCodeBtn.click();
 
     // Inline validation error
-    await expect(page.locator("text=Phone number must start with + followed by country code and digits")).toBeVisible();
+    await expect(page.locator("text=Must be in international format starting with +")).toBeVisible();
   });
 });

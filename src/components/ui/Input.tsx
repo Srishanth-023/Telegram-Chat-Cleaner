@@ -31,7 +31,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             className={twMerge(
               clsx(
-                "w-full h-10 px-3 py-2 bg-surface border rounded-control text-sm text-text placeholder:text-text-muted transition-colors",
+                "w-full min-h-[44px] h-11 px-3 py-2 bg-surface border rounded-control text-base text-text placeholder:text-text-muted transition-colors",
                 "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
                 mono && "font-mono tracking-tight",
                 errorMessage

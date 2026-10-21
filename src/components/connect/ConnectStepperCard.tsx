@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "@/components/ui/Icons";
 import { Stepper, StepItem } from "@/components/ui/Stepper";
+import { OtpInput } from "@/components/ui/OtpInput";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -82,6 +83,18 @@ export function ConnectStepperCard() {
     // Prefetch dashboard for instantaneous transition upon login
     router?.prefetch?.("/dashboard");
 
+    // Track visualViewport for on-screen keyboard
+    const handleViewportChange = () => {
+      const active = document.activeElement;
+      if (active && (active.tagName === "INPUT" || active.tagName === "BUTTON")) {
+        active.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    };
+
+    if (typeof window !== "undefined" && window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleViewportChange);
+    }
+
     // Check for saved encrypted session on mount
     loadEncryptedSession().then((saved) => {
       if (saved) {
@@ -100,6 +113,9 @@ export function ConnectStepperCard() {
 
     return () => {
       unsubscribe();
+      if (typeof window !== "undefined" && window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleViewportChange);
+      }
     };
   }, [router]);
 
@@ -474,6 +490,9 @@ export function ConnectStepperCard() {
               helperText="Numeric App ID from my.telegram.org"
               mono
               autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
               required
             />
 
@@ -485,7 +504,8 @@ export function ConnectStepperCard() {
                 <button
                   type="button"
                   onClick={() => setShowApiHash(!showApiHash)}
-                  className="text-xs text-text-muted hover:text-text flex items-center gap-1 focus:outline-none"
+                  className="min-h-[44px] px-2 text-xs text-text-muted hover:text-text flex items-center gap-1 focus:outline-none"
+                  aria-label={showApiHash ? "Hide API Hash" : "Show API Hash"}
                 >
                   {showApiHash ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   <span>{showApiHash ? "Hide" : "Show"}</span>
@@ -500,6 +520,9 @@ export function ConnectStepperCard() {
                 helperText="32-character hash from my.telegram.org"
                 mono
                 autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
                 required
               />
             </div>
@@ -546,8 +569,9 @@ export function ConnectStepperCard() {
             </div>
 
             <Input
-              label="International Phone Number"
+              label="Phone Number (International Format)"
               type="tel"
+              inputMode="tel"
               placeholder="+1 234 567 8900"
               value={phone}
               onChange={(e) => {
@@ -561,6 +585,9 @@ export function ConnectStepperCard() {
               helperText="Must include + and country code (e.g. +1 for US/CA, +44 for UK, +91 for India)"
               mono
               autoComplete="tel"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
               required
               disabled={authState.isLoading}
             />
@@ -602,28 +629,33 @@ export function ConnectStepperCard() {
               </span>
             </div>
 
-            <Input
-              label="Verification Code"
-              type="text"
-              inputMode="numeric"
-              placeholder="12345"
-              maxLength={6}
-              value={code}
-              onChange={(e) => {
-                setCode(e.target.value.replace(/\D/g, ""));
-                authBridge.clearError();
-                if (clientErrors.code) {
-                  setClientErrors((prev) => ({ ...prev, code: "" }));
-                }
-              }}
-              errorMessage={clientErrors.code}
-              helperText="Enter the 5-digit code without spaces"
-              mono
-              className="text-center text-lg tracking-widest font-bold"
-              autoComplete="one-time-code"
-              required
-              disabled={authState.isLoading}
-            />
+            <div className="py-2">
+              <label className="block text-xs font-semibold text-text uppercase tracking-wider mb-2 text-center">
+                5-Digit Verification Code
+              </label>
+              <OtpInput
+                length={5}
+                value={code}
+                onChange={(val) => {
+                  setCode(val);
+                  authBridge.clearError();
+                  if (clientErrors.code) {
+                    setClientErrors((prev) => ({ ...prev, code: "" }));
+                  }
+                }}
+                hasError={!!clientErrors.code}
+                disabled={authState.isLoading}
+              />
+              {clientErrors.code ? (
+                <p className="mt-2 text-xs text-danger font-medium text-center">
+                  {clientErrors.code}
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-text-muted text-center">
+                  Enter the 5-digit code sent to your Telegram app or SMS
+                </p>
+              )}
+            </div>
 
             <div className="pt-4 flex items-center justify-between gap-3">
               <Button
@@ -675,7 +707,8 @@ export function ConnectStepperCard() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-xs text-text-muted hover:text-text flex items-center gap-1 focus:outline-none"
+                  className="min-h-[44px] px-2 text-xs text-text-muted hover:text-text flex items-center gap-1 focus:outline-none"
+                  aria-label={showPassword ? "Hide 2FA Password" : "Show 2FA Password"}
                 >
                   {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   <span>{showPassword ? "Hide" : "Show"}</span>

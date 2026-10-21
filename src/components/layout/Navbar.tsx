@@ -25,8 +25,31 @@ export function Navbar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const resetAllStore = useAppStore((s) => s.resetAll);
 
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const lastScrollY = React.useRef(0);
+
   // Global inactivity timer
   useInactivityTimeout();
+
+  useEffect(() => {
+    if (pathname !== "/dashboard") {
+      setIsHeaderVisible(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > 60 && currentScrollY > lastScrollY.current + 8) {
+        setIsHeaderVisible(false); // scrolling down
+      } else if (currentScrollY < lastScrollY.current - 8 || currentScrollY <= 20) {
+        setIsHeaderVisible(true); // scrolling up
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
 
   useEffect(() => {
     // Prefetch all primary navigation routes
@@ -88,32 +111,42 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-surface">
-        <div className="w-full px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
+      <header
+        className={clsx(
+          "sticky top-0 z-40 w-full border-b border-border bg-surface transition-transform duration-200 pt-[env(safe-area-inset-top)]",
+          pathname === "/dashboard" && !isHeaderVisible && "-translate-y-full sm:translate-y-0"
+        )}
+      >
+        <div className="w-full px-3 sm:px-8 lg:px-12 h-14 sm:h-16 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
+            className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control py-1"
           >
-            <div className="w-8 h-8 rounded-control bg-primary text-white flex items-center justify-center font-bold text-sm group-hover:bg-primary-hover transition-colors">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-control bg-primary text-white flex items-center justify-center font-bold text-xs sm:text-sm group-hover:bg-primary-hover transition-colors shrink-0">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-semibold text-text text-sm sm:text-base tracking-tight leading-none">
+              <span className="font-semibold text-text text-xs sm:text-base tracking-tight leading-none">
                 Telegram Chat Cleaner
               </span>
-              <span className="text-[10px] text-text-muted font-medium uppercase tracking-wider mt-0.5">
+              <span className="text-[9px] sm:text-[10px] text-text-muted font-medium uppercase tracking-wider mt-0.5">
                 Client-Side Only
               </span>
             </div>
           </Link>
 
           {/* Right-aligned Navigation Links and Actions */}
-          <div className="flex items-center gap-6">
-            <nav className="flex items-center gap-5 sm:gap-6 text-xs font-medium text-text-muted">
+          <div className="flex items-center gap-3 sm:gap-6">
+            <nav
+              className={clsx(
+                "items-center gap-3 sm:gap-6 text-xs font-medium text-text-muted",
+                session.isConnected ? "hidden sm:flex" : "flex"
+              )}
+            >
               <Link
                 href="/about"
                 className={clsx(
-                  "hover:text-text transition-colors",
+                  "hover:text-text transition-colors py-2",
                   pathname === "/about" && "text-primary font-semibold"
                 )}
               >
@@ -122,7 +155,7 @@ export function Navbar() {
               <Link
                 href="/privacy"
                 className={clsx(
-                  "hover:text-text transition-colors",
+                  "hover:text-text transition-colors py-2",
                   pathname === "/privacy" && "text-primary font-semibold"
                 )}
               >
@@ -131,7 +164,7 @@ export function Navbar() {
               <Link
                 href="/terms"
                 className={clsx(
-                  "hover:text-text transition-colors",
+                  "hover:text-text transition-colors py-2",
                   pathname === "/terms" && "text-primary font-semibold"
                 )}
               >
@@ -139,18 +172,20 @@ export function Navbar() {
               </Link>
             </nav>
 
-            <div className="h-4 w-px bg-border hidden sm:block" />
+            {session.isConnected && <div className="h-4 w-px bg-border hidden sm:block" />}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {session.isConnected && displayName ? (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsDisconnectOpen(true)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-control border border-border bg-surface hover:bg-surface-muted transition-colors text-xs font-medium text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    className="flex items-center gap-1.5 sm:gap-2 min-h-[44px] px-2.5 sm:px-3 py-1.5 rounded-control border border-border bg-surface hover:bg-surface-muted transition-colors text-xs font-medium text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label="Account session menu"
                   >
-                    <UserCheck className="w-3.5 h-3.5 text-success" />
+                    <UserCheck className="w-3.5 h-3.5 text-success shrink-0" />
                     <span className="hidden sm:inline font-mono">{displayName}</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
+                    <span className="inline sm:hidden font-mono max-w-[100px] truncate">{displayName}</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-text-muted shrink-0" />
                   </button>
                 </div>
               ) : pathname !== "/connect" && (

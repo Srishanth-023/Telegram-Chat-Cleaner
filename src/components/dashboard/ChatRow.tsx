@@ -58,6 +58,7 @@ export const ChatRow = memo(function ChatRow({
 }: ChatRowProps) {
   const color = getDeterministicColor(item.name);
   const initials = getInitials(item.name);
+  const touchTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const handleClick = (e: React.MouseEvent) => {
     if (item.isProtected) return;
@@ -65,6 +66,23 @@ export const ChatRow = memo(function ChatRow({
       onRangeSelect(item.id);
     } else {
       onToggle(item.id);
+    }
+  };
+
+  const handleTouchStart = () => {
+    if (item.isProtected) return;
+    touchTimerRef.current = setTimeout(() => {
+      onToggle(item.id);
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate?.(40);
+      }
+    }, 450);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchTimerRef.current) {
+      clearTimeout(touchTimerRef.current);
+      touchTimerRef.current = null;
     }
   };
 
@@ -90,16 +108,22 @@ export const ChatRow = memo(function ChatRow({
       aria-selected={isSelected}
       tabIndex={item.isProtected ? -1 : 0}
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchEnd}
       onKeyDown={handleKeyDown}
       className={clsx(
-        "group flex items-center gap-3.5 px-4 py-3 min-h-[58px] border-b border-border transition-colors select-none text-left cursor-pointer",
+        "group flex items-center gap-2.5 sm:gap-3.5 px-3 sm:px-4 py-2.5 min-h-[64px] border-b border-border transition-colors select-none text-left cursor-pointer",
         isSelected && "bg-primary-soft/80 border-primary/20",
         !isSelected && !item.isProtected && "hover:bg-surface-muted/70 bg-surface",
         item.isProtected && "bg-slate-50 opacity-60 cursor-not-allowed"
       )}
     >
-      {/* Selection Checkbox */}
-      <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+      {/* Selection Checkbox with 44x44px Touch Target */}
+      <div
+        className="shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2"
+        onClick={(e) => e.stopPropagation()}
+      >
         {item.isProtected ? (
           <Tooltip content="Protected: Saved Messages and service notifications cannot be deleted.">
             <div className="p-1 text-text-muted">

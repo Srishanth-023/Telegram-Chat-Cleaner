@@ -5,26 +5,23 @@ import { useRouter } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   Search,
-  SlidersHorizontal,
   ArrowUpDown,
   RefreshCw,
   CheckSquare,
   Square,
   AlertCircle,
-  Archive,
   Inbox,
   Filter,
   X,
 } from "@/components/ui/Icons";
 import { useAppStore, TypeFilter, ArchivedFilter, SortField } from "@/lib/store";
-import { fetchAllDialogs, ChatItem } from "@/lib/telegram/dialogs";
-import { requireClient, getClient } from "@/lib/telegram/client";
+import { fetchAllDialogs } from "@/lib/telegram/dialogs";
+import { getClient } from "@/lib/telegram/client";
 import { mapTelegramError } from "@/lib/telegram/errors";
 import { isAuthenticated } from "@/lib/security/guards";
 import { ChatRow } from "./ChatRow";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 import { clsx } from "clsx";
 
 export function DashboardView() {
@@ -58,6 +55,16 @@ export function DashboardView() {
   } = useAppStore();
 
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  // Debounce search query at 200ms
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 200);
+
+    return () => clearTimeout(handler);
+  }, [searchInput, setSearchQuery]);
 
   const loadConversations = useCallback(async () => {
     setIsLoadingChats(true);
@@ -143,11 +150,11 @@ export function DashboardView() {
     return sortedChats.filter((c) => !c.isProtected).map((c) => c.id);
   }, [sortedChats]);
 
-  // Virtualizer setup
+  // Virtualizer setup with 64px row estimate
   const rowVirtualizer = useVirtualizer({
     count: sortedChats.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 58,
+    estimateSize: () => 64,
     overscan: 10,
   });
 
@@ -164,11 +171,16 @@ export function DashboardView() {
     }
   };
 
+  const activeFilterCount =
+    (typeFilter !== "all" ? 1 : 0) +
+    (archivedFilter !== "all" ? 1 : 0) +
+    (sortField !== "lastActivity" || !sortAscending ? 1 : 0);
+
   return (
-    <div className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-6 pb-28">
+    <div className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 sm:pb-32">
       {/* Top Controls Header */}
-      <div className="flex flex-col gap-4 mb-4 text-left">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 mb-3 text-left">
+        <div className="flex items-center justify-between gap-2">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-text">
               Conversations
@@ -184,132 +196,122 @@ export function DashboardView() {
               size="sm"
               onClick={loadConversations}
               disabled={isLoadingChats}
-              className="text-xs"
+              className="text-xs min-h-[44px] sm:min-h-0"
+              aria-label="Reload chats"
             >
-              <RefreshCw className={clsx("w-3.5 h-3.5 mr-1.5", isLoadingChats && "animate-spin")} />
-              Reload Chats
+              <RefreshCw className={clsx("w-3.5 h-3.5 sm:mr-1.5", isLoadingChats && "animate-spin")} />
+              <span className="hidden sm:inline">Reload Chats</span>
             </Button>
 
-            {/* Mobile Filter Toggle */}
+            {/* Mobile Filter Button */}
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-              className="sm:hidden text-xs"
+              onClick={() => setMobileFilterOpen(true)}
+              className="md:hidden text-xs min-h-[44px] relative"
+              aria-label="Open filter options"
             >
               <Filter className="w-3.5 h-3.5 mr-1" />
-              Filters
+              <span>Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="ml-1.5 bg-primary text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full tnum">
+                  {activeFilterCount}
+                </span>
+              )}
             </Button>
           </div>
         </div>
 
-        {/* Toolbar: Search, Filters, Sorting */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search conversations by name or @username..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-9 pr-8 bg-surface border border-border rounded-control text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text p-1"
-                aria-label="Clear search"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Archived Filter Toggle */}
-          <div className="hidden sm:inline-flex rounded-control border border-border bg-surface p-1 text-xs select-none">
-            {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setArchivedFilter(mode)}
-                className={clsx(
-                  "px-3 py-1 rounded-[6px] font-medium capitalize transition-colors",
-                  archivedFilter === mode
-                    ? "bg-primary text-white"
-                    : "text-text-muted hover:text-text"
-                )}
-              >
-                {mode}
-              </button>
-            ))}
-          </div>
-
-          {/* Sort Selector */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-surface border border-border rounded-control px-2.5 h-10 text-xs">
-            <ArrowUpDown className="w-3.5 h-3.5 text-text-muted" />
-            <select
-              value={sortField}
-              onChange={(e) => setSortField(e.target.value as SortField)}
-              className="bg-transparent text-text font-medium focus:outline-none cursor-pointer"
-            >
-              <option value="lastActivity">Recent Activity</option>
-              <option value="name">Name</option>
-              <option value="kind">Type</option>
-            </select>
-            <button
-              onClick={toggleSortDirection}
-              className="p-1 text-text-muted hover:text-text rounded-control"
-              title={sortAscending ? "Ascending" : "Descending"}
-            >
-              {sortAscending ? "▲" : "▼"}
-            </button>
-          </div>
-        </div>
-
-        {/* Type Filter Chips (Desktop & Mobile) */}
-        <div
-          className={clsx(
-            "flex items-center gap-1.5 flex-wrap text-xs select-none",
-            !mobileFilterOpen && "hidden sm:flex"
-          )}
-        >
-          <span className="text-text-muted font-medium mr-1">Types:</span>
-          {[
-            { id: "all", label: "All" },
-            { id: "private", label: "Private" },
-            { id: "bot", label: "Bots" },
-            { id: "group", label: "Groups" },
-            { id: "channel", label: "Channels" },
-          ].map((type) => (
-            <button
-              key={type.id}
-              onClick={() => setTypeFilter(type.id as TypeFilter)}
-              className={clsx(
-                "px-2.5 py-1 rounded-full border transition-all text-xs font-medium",
-                typeFilter === type.id
-                  ? "bg-primary-soft border-primary text-primary font-semibold"
-                  : "border-border bg-surface text-text-muted hover:border-slate-300 hover:text-text"
+        {/* Sticky Search & Inline Desktop Filters */}
+        <div className="sticky top-14 sm:top-16 z-20 bg-bg pt-1 pb-2">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2.5">
+            {/* Search Box */}
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search conversations by name or @username..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="w-full h-11 sm:h-10 pl-9 pr-9 bg-surface border border-border rounded-control text-base sm:text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              {searchInput && (
+                <button
+                  onClick={() => {
+                    setSearchInput("");
+                    setSearchQuery("");
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text min-h-[40px] min-w-[40px] flex items-center justify-center rounded-control"
+                  aria-label="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               )}
-            >
-              {type.label}
-            </button>
-          ))}
+            </div>
 
-          {/* Mobile extra archived selector */}
-          <div className="sm:hidden flex items-center gap-1 w-full mt-2 pt-2 border-t border-border">
-            <span className="text-text-muted font-medium mr-1">Folder:</span>
-            {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
+            {/* Desktop Archived Filter Toggle */}
+            <div className="hidden md:inline-flex rounded-control border border-border bg-surface p-1 text-xs select-none shrink-0">
+              {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setArchivedFilter(mode)}
+                  className={clsx(
+                    "px-3 py-1.5 rounded-[6px] font-medium capitalize transition-colors min-h-[32px]",
+                    archivedFilter === mode
+                      ? "bg-primary text-white"
+                      : "text-text-muted hover:text-text"
+                  )}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop Sort Selector */}
+            <div className="hidden md:flex items-center gap-1.5 bg-surface border border-border rounded-control px-2.5 h-10 text-xs shrink-0">
+              <ArrowUpDown className="w-3.5 h-3.5 text-text-muted" />
+              <select
+                value={sortField}
+                onChange={(e) => setSortField(e.target.value as SortField)}
+                className="bg-transparent text-text font-medium focus:outline-none cursor-pointer"
+                aria-label="Sort by field"
+              >
+                <option value="lastActivity">Recent Activity</option>
+                <option value="name">Name</option>
+                <option value="kind">Type</option>
+              </select>
               <button
-                key={mode}
-                onClick={() => setArchivedFilter(mode)}
+                onClick={toggleSortDirection}
+                className="p-1.5 text-text-muted hover:text-text rounded-control min-h-[32px] min-w-[32px] flex items-center justify-center"
+                title={sortAscending ? "Ascending" : "Descending"}
+                aria-label={sortAscending ? "Sort ascending" : "Sort descending"}
+              >
+                {sortAscending ? "▲" : "▼"}
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop Type Filter Chips */}
+          <div className="hidden md:flex items-center gap-1.5 mt-2.5 text-xs select-none">
+            <span className="text-text-muted font-medium mr-1">Types:</span>
+            {[
+              { id: "all", label: "All" },
+              { id: "private", label: "Private" },
+              { id: "bot", label: "Bots" },
+              { id: "group", label: "Groups" },
+              { id: "channel", label: "Channels" },
+            ].map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setTypeFilter(type.id as TypeFilter)}
                 className={clsx(
-                  "px-2.5 py-0.5 rounded-full border text-xs capitalize",
-                  archivedFilter === mode
-                    ? "bg-primary text-white border-primary"
-                    : "border-border text-text-muted bg-surface"
+                  "px-3 py-1 rounded-full border transition-all text-xs font-medium",
+                  typeFilter === type.id
+                    ? "bg-primary-soft border-primary text-primary font-semibold"
+                    : "border-border bg-surface text-text-muted hover:border-slate-300 hover:text-text"
                 )}
               >
-                {mode}
+                {type.label}
               </button>
             ))}
           </div>
@@ -317,15 +319,15 @@ export function DashboardView() {
 
         {/* Filter Summary & Bulk Selection Row */}
         <div className="flex items-center justify-between py-2 border-y border-border text-xs text-text-muted">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleSelectAllToggle}
-              className="flex items-center gap-1.5 text-text font-medium hover:text-primary transition-colors focus:outline-none"
+              className="flex items-center gap-2 text-text font-medium hover:text-primary transition-colors focus:outline-none min-h-[44px] py-1"
             >
               {isAllFilteredSelected ? (
-                <CheckSquare className="w-4 h-4 text-primary" />
+                <CheckSquare className="w-4 h-4 text-primary shrink-0" />
               ) : (
-                <Square className="w-4 h-4 text-text-muted" />
+                <Square className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <span>
                 Select All Filtered ({filteredSelectableIds.length})
@@ -335,21 +337,21 @@ export function DashboardView() {
             {selectedCount > 0 && (
               <button
                 onClick={clearSelection}
-                className="text-text-muted hover:text-danger underline ml-2"
+                className="text-text-muted hover:text-danger underline ml-2 min-h-[44px] flex items-center"
               >
-                Clear Selection
+                Clear
               </button>
             )}
           </div>
 
-          <div className="tnum font-medium">
-            Showing {sortedChats.length} of {chats.length} conversations
+          <div className="tnum font-medium text-right">
+            {sortedChats.length} of {chats.length}
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 rounded-card border border-border bg-surface overflow-hidden relative flex flex-col">
+      <div className="flex-1 rounded-card border border-border bg-surface overflow-hidden relative flex flex-col min-h-0">
         {/* Loading State with Determinate Counter */}
         {isLoadingChats && (
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
@@ -390,6 +392,7 @@ export function DashboardView() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
+                  setSearchInput("");
                   setSearchQuery("");
                   setTypeFilter("all");
                   setArchivedFilter("all");
@@ -402,14 +405,14 @@ export function DashboardView() {
           </div>
         )}
 
-        {/* Virtualized Chat List */}
+        {/* Virtualized Chat List with Overscroll Contain */}
         {!isLoadingChats && !chatsError && sortedChats.length > 0 && (
           <div
             ref={parentRef}
             role="listbox"
             aria-multiselectable="true"
             aria-label="Telegram Conversations"
-            className="overflow-auto h-[calc(100vh-320px)] min-h-[500px] w-full"
+            className="overflow-y-auto overscroll-contain h-[calc(100dvh-270px)] min-h-[400px] w-full"
           >
             <div
               style={{
@@ -448,19 +451,20 @@ export function DashboardView() {
         )}
       </div>
 
-      {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface border-t border-border py-3.5 px-4 sm:px-8 lg:px-12">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      {/* Sticky Bottom Action Bar with Safe Area Inset */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface border-t border-border py-3 px-3 sm:px-6 lg:px-8 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <span className="tnum font-bold text-sm sm:text-base text-text">
               {selectedCount} selected
             </span>
             {selectedCount > 0 && (
               <button
                 onClick={clearSelection}
-                className="text-xs text-text-muted hover:text-danger underline hidden sm:inline"
+                className="text-xs text-text-muted hover:text-danger underline min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Clear all selections"
               >
-                Deselect all
+                Clear
               </button>
             )}
           </div>
@@ -471,13 +475,158 @@ export function DashboardView() {
               variant="primary"
               disabled={selectedCount === 0}
               onClick={() => router.push("/review")}
-              className="font-semibold px-6"
+              className="font-semibold px-5 sm:px-6 min-h-[44px]"
             >
-              Review Selection ({selectedCount})
+              Review ({selectedCount})
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Filter Bottom Sheet Dialog */}
+      <Dialog open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filter & Sort</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-5 py-2">
+            {/* Chat Types */}
+            <div>
+              <span className="text-xs font-semibold text-text uppercase tracking-wider block mb-2">
+                Chat Type
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "all", label: "All Types" },
+                  { id: "private", label: "Direct Messages" },
+                  { id: "bot", label: "Bots" },
+                  { id: "group", label: "Groups" },
+                  { id: "channel", label: "Channels" },
+                ].map((type) => (
+                  <button
+                    key={type.id}
+                    onClick={() => setTypeFilter(type.id as TypeFilter)}
+                    className={clsx(
+                      "min-h-[44px] px-3 py-2 rounded-control border text-sm font-medium transition-colors text-left flex items-center justify-between",
+                      typeFilter === type.id
+                        ? "bg-primary-soft border-primary text-primary font-semibold"
+                        : "border-border bg-surface text-text hover:border-slate-300"
+                    )}
+                  >
+                    <span>{type.label}</span>
+                    {typeFilter === type.id && <span className="text-primary font-bold">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Folder / Archived */}
+            <div>
+              <span className="text-xs font-semibold text-text uppercase tracking-wider block mb-2">
+                Folder
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setArchivedFilter(mode)}
+                    className={clsx(
+                      "min-h-[44px] px-2 py-2 rounded-control border text-sm font-medium capitalize transition-colors flex items-center justify-center",
+                      archivedFilter === mode
+                        ? "bg-primary text-white border-primary"
+                        : "border-border bg-surface text-text"
+                    )}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sort Field & Order */}
+            <div>
+              <span className="text-xs font-semibold text-text uppercase tracking-wider block mb-2">
+                Sort By
+              </span>
+              <div className="flex flex-col gap-2">
+                {[
+                  { id: "lastActivity", label: "Recent Activity" },
+                  { id: "name", label: "Alphabetical (Name)" },
+                  { id: "kind", label: "Chat Type" },
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSortField(s.id as SortField)}
+                    className={clsx(
+                      "min-h-[44px] px-3 py-2 rounded-control border text-sm font-medium transition-colors text-left flex items-center justify-between",
+                      sortField === s.id
+                        ? "bg-primary-soft border-primary text-primary font-semibold"
+                        : "border-border bg-surface text-text"
+                    )}
+                  >
+                    <span>{s.label}</span>
+                    {sortField === s.id && <span className="text-primary font-bold">✓</span>}
+                  </button>
+                ))}
+
+                <div className="flex gap-2 mt-1">
+                  <button
+                    onClick={() => {
+                      if (!sortAscending) toggleSortDirection();
+                    }}
+                    className={clsx(
+                      "flex-1 min-h-[44px] px-3 py-2 rounded-control border text-xs font-medium text-center",
+                      sortAscending
+                        ? "bg-primary-soft border-primary text-primary font-semibold"
+                        : "border-border text-text-muted"
+                    )}
+                  >
+                    Ascending ▲
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (sortAscending) toggleSortDirection();
+                    }}
+                    className={clsx(
+                      "flex-1 min-h-[44px] px-3 py-2 rounded-control border text-xs font-medium text-center",
+                      !sortAscending
+                        ? "bg-primary-soft border-primary text-primary font-semibold"
+                        : "border-border text-text-muted"
+                    )}
+                  >
+                    Descending ▼
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-border mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setTypeFilter("all");
+                setArchivedFilter("all");
+                setSortField("lastActivity");
+              }}
+              className="min-h-[44px] text-xs"
+            >
+              Reset Filters
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setMobileFilterOpen(false)}
+              className="min-h-[44px] px-6 text-sm"
+            >
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

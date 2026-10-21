@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { HttpsWarningBanner } from "@/components/layout/HttpsWarningBanner";
@@ -18,10 +18,18 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#F8FAFC",
+};
+
 export const metadata: Metadata = {
   title: "Telegram Chat Cleaner: Client-Side Bulk Chat Removal",
   description:
     "Securely bulk-remove conversations from your personal Telegram account only. Zero server, zero tracking, open source.",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({

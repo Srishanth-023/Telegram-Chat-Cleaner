@@ -42,11 +42,11 @@ test.describe("Connect Flow & Route Guards", () => {
     const apiHashInput = page.getByPlaceholder(/32-character hexadecimal hash/i);
     await expect(apiHashInput).toHaveAttribute("type", "password");
 
-    const toggleBtn = page.getByRole("button", { name: /^show$/i });
+    const toggleBtn = page.getByRole("button", { name: /show/i });
     await toggleBtn.click();
     await expect(apiHashInput).toHaveAttribute("type", "text");
 
-    const hideBtn = page.getByRole("button", { name: /^hide$/i });
+    const hideBtn = page.getByRole("button", { name: /hide/i });
     await hideBtn.click();
     await expect(apiHashInput).toHaveAttribute("type", "password");
   });

@@ -84,3 +84,49 @@ Execute this manual protocol before deploying updates, using a designated Telegr
 - [ ] In the top navbar, click user profile badge and choose "Log Out Session on Telegram".
 - [ ] Verify session is terminated on Telegram servers and local memory data is wiped.
 - [ ] Confirm browser redirects to `/connect`.
+
+---
+
+## 3. Mobile & Real-Device Testing Protocol (iOS Safari & Android Chrome)
+
+### Viewport & Physical Device Matrix
+- **Small Phone**: 320 px to 375 px (iPhone SE, compact Android)
+- **Standard Phone**: 390 px to 414 px (iPhone 14/15, Pixel 7/8, Galaxy S23)
+- **Tablet**: 768 px to 1024 px (iPad Portrait, Android tablet)
+- **Desktop**: 1280 px+
+
+### Mobile-Specific Checkpoints
+
+#### A. Foundations & Layout
+- [ ] **Zero Horizontal Scroll**: Ensure `document.documentElement.scrollWidth <= window.innerWidth` across all routes (`/`, `/connect`, `/dashboard`, `/review`, `/progress`).
+- [ ] **Touch Targets**: All tappable elements (buttons, inputs, checkboxes, toggles, filter chips) are at least 44x44 px with >=8 px spacing.
+- [ ] **iOS Auto-Zoom Prevention**: All input fields have font-size >= 16 px to prevent Safari automatic page zoom on focus.
+- [ ] **Safe Area Insets**: Header top padding respects `env(safe-area-inset-top)`; sticky bottom bars respect `env(safe-area-inset-bottom)`.
+- [ ] **PWA / Add to Home Screen**: Web manifest loads properly with `#F8FAFC` theme color and standalone display mode.
+
+#### B. Per-Screen Touch Verification
+- [ ] **Onboarding (`/`)**: 3 trust points stack as cards; `my.telegram.org` steps render as numbered accordion; sticky bottom "Get started" CTA bar appears on mobile.
+- [ ] **Connect (`/connect`)**: Stepper displays compact mobile layout ("Step X of 4"); 5-digit OTP input handles auto-advance, backspace, and paste; virtual viewport keeps active inputs visible when software keyboard opens.
+- [ ] **Dashboard (`/dashboard`)**:
+  - Header hides on scroll down and reappears on scroll up.
+  - Search bar remains sticky under header with 200 ms debounce.
+  - "Filters" button displays active filter count badge and opens full-width bottom sheet dialog.
+  - Chat rows are >= 64 px tall with clean truncation without overflow.
+  - Long-press on touch enters row selection; tap toggles selection.
+  - Sticky bottom selection bar has safe area padding and does not obscure the bottom row.
+- [ ] **Review (`/review`)**:
+  - Chat list groups are collapsible per kind.
+  - Consequences panel is collapsed by default with a "Read details" expander; confirmation controls unlock only after details are viewed.
+  - Clear 16 px gap between checkbox and destructive button.
+- [ ] **Progress (`/progress`)**:
+  - 3-column stats row (Done, Failed, Remaining).
+  - Sticky bottom Pause/Cancel bar on mobile.
+  - Banner warning: "Keep this tab open and your screen on until removal completes."
+  - Completion summary stacks actions with "Log out this session on Telegram" at the top.
+
+#### C. Mobile Background & Network Robustness
+- [ ] **Screen Wake Lock**: Wake lock is requested when removal starts and released when complete.
+- [ ] **Background Tab / Visibility Change**: Switching away from the tab or minimizing the browser automatically pauses the queue. Returning prompts for a one-tap Resume without losing state or skipping items.
+- [ ] **Network Loss**: Going into Airplane mode triggers auto-pause; reconnecting network checks client connection and allows clean Resume.
+- [ ] **BeforeUnload Protection**: Closing or refreshing active removal tab triggers browser leave confirmation.
+

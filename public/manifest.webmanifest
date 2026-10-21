@@ -1,0 +1,16 @@
+{
+  "name": "Telegram Chat Cleaner",
+  "short_name": "Chat Cleaner",
+  "description": "Secure client-side bulk chat removal for Telegram",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EEF0F3",
+  "theme_color": "#F8FAFC",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
