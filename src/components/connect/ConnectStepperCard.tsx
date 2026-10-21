@@ -14,6 +14,8 @@ import {
   Lock,
   CheckCircle2,
   Trash2,
+  ShieldCheck,
+  ExternalLink,
 } from "@/components/ui/Icons";
 import { Stepper, StepItem } from "@/components/ui/Stepper";
 import { Card } from "@/components/ui/Card";
@@ -312,25 +314,101 @@ export function ConnectStepperCard() {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto py-8 px-4">
-      <Card className="border-border bg-surface text-left">
-        {/* Header & Stepper */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-1">
-            <h1 className="text-xl font-bold tracking-tight text-text">
-              Connect Telegram Account
-            </h1>
-            <Badge variant="primary">GramJS over WSS</Badge>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-10 flex-1 flex flex-col justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Information & Credentials Guide Column */}
+        <div className="lg:col-span-5 space-y-6 text-left">
+          <div className="p-6 rounded-card bg-surface border border-border space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary-soft text-primary text-xs font-semibold border border-primary/20">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Zero-Backend Architecture</span>
+            </div>
+
+            <h2 className="text-xl font-bold tracking-tight text-text">
+              Direct MTProto Connection
+            </h2>
+
+            <p className="text-xs text-text-muted leading-relaxed">
+              This application compiles to static assets and connects directly from your web browser to Telegram data centers over secure WebSockets using GramJS. Your credentials and session keys are never transmitted to any third-party server.
+            </p>
+
+            <div className="space-y-3 pt-2 text-xs border-t border-border">
+              <div className="flex items-start gap-2.5 text-text-muted">
+                <div className="w-5 h-5 rounded bg-emerald-100 text-success flex items-center justify-center shrink-0 text-[10px] font-bold">
+                  1
+                </div>
+                <div>
+                  <strong className="text-text block">Never deletes for others</strong>
+                  <span>Every removal operation hardcodes <code className="font-mono text-text">revoke: false</code>. Removals apply strictly to your own account view.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5 text-text-muted">
+                <div className="w-5 h-5 rounded bg-blue-100 text-primary flex items-center justify-center shrink-0 text-[10px] font-bold">
+                  2
+                </div>
+                <div>
+                  <strong className="text-text block">Ephemeral in-memory session</strong>
+                  <span>By default, session data exists solely in browser RAM. Closing the tab wipes all tokens immediately.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2.5 text-text-muted">
+                <div className="w-5 h-5 rounded bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-[10px] font-bold">
+                  3
+                </div>
+                <div>
+                  <strong className="text-text block">Zero secret logging</strong>
+                  <span>Enforced by automated tests: passwords, 2FA codes, and hash strings are never written to browser console.</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-text-muted">
-            All verification steps communicate directly from your browser to Telegram.
-          </p>
-          <Stepper
-            steps={STEPS}
-            currentStepIndex={getStepIndex(authState.currentStep)}
-            className="mt-2"
-          />
+
+          {/* Quick Guide to Credentials */}
+          <div className="p-6 rounded-card bg-surface border border-border space-y-3 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-text uppercase tracking-wider text-[11px]">
+                How to get API credentials
+              </span>
+              <a
+                href="https://my.telegram.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium inline-flex items-center gap-1 hover:underline text-xs"
+              >
+                my.telegram.org <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <ol className="list-decimal pl-4 space-y-1.5 text-text-muted leading-relaxed">
+              <li>Log in to <strong className="text-text">my.telegram.org</strong> using your Telegram phone number.</li>
+              <li>Navigate to <strong className="text-text">API development tools</strong>.</li>
+              <li>Create a new application to obtain your numeric <strong className="text-text">App api_id</strong> and 32-character hexadecimal <strong className="text-text">App api_hash</strong>.</li>
+            </ol>
+          </div>
         </div>
+
+        {/* Right Stepper Card Column */}
+        <div className="lg:col-span-7">
+          <Card className="border-border bg-surface text-left p-6 sm:p-8">
+            {/* Header & Stepper */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-1">
+                <h1 className="text-xl font-bold tracking-tight text-text">
+                  Connect Telegram Account
+                </h1>
+                <Badge variant="primary">GramJS over WSS</Badge>
+              </div>
+              <p className="text-xs text-text-muted">
+                All verification steps communicate directly from your browser to Telegram.
+              </p>
+              <Stepper
+                steps={STEPS}
+                currentStepIndex={getStepIndex(authState.currentStep)}
+                className="mt-2"
+              />
+            </div>
 
         {/* Saved Session Restore Banner */}
         {existingSavedSession && authState.currentStep === "credentials" && (
@@ -630,7 +708,9 @@ export function ConnectStepperCard() {
             </div>
           </form>
         )}
-      </Card>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

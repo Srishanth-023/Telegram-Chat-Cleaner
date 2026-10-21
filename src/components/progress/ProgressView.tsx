@@ -163,7 +163,7 @@ export function ProgressView() {
   };
 
   return (
-    <div className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 pb-24 text-left">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 pb-24 text-left">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
@@ -193,36 +193,39 @@ export function ProgressView() {
         </Badge>
       </div>
 
-      {/* Flood-Wait Live Alert */}
-      {progress.remainingSecondsWait && progress.remainingSecondsWait > 0 && (
-        <div
-          role="alert"
-          className="mb-6 p-4 rounded-card bg-amber-50 border border-amber-300 text-amber-900 flex items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
-            <div>
-              <strong className="text-sm font-semibold block">
-                Telegram Rate Limit (Flood Wait)
-              </strong>
-              <p className="text-xs text-amber-800">
-                Telegram asked us to wait {progress.remainingSecondsWait}s before continuing. Retrying automatically.
-              </p>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Progress Controls & Status Summary */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Flood-Wait Live Alert */}
+          {progress.remainingSecondsWait && progress.remainingSecondsWait > 0 && (
+            <div
+              role="alert"
+              className="p-4 rounded-card bg-amber-50 border border-amber-300 text-amber-900 flex items-center justify-between gap-4"
+            >
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
+                <div>
+                  <strong className="text-sm font-semibold block">
+                    Telegram Rate Limit (Flood Wait)
+                  </strong>
+                  <p className="text-xs text-amber-800">
+                    Telegram asked us to wait {progress.remainingSecondsWait}s before continuing. Retrying automatically.
+                  </p>
+                </div>
+              </div>
+              <span className="tnum text-xl font-bold font-mono text-warning bg-amber-100 px-3 py-1 rounded-control border border-amber-200">
+                {progress.remainingSecondsWait}s
+              </span>
             </div>
-          </div>
-          <span className="tnum text-xl font-bold font-mono text-warning bg-amber-100 px-3 py-1 rounded-control border border-amber-200">
-            {progress.remainingSecondsWait}s
-          </span>
-        </div>
-      )}
+          )}
 
-      {/* Active Run Card */}
-      <Card className="mb-6 bg-surface border-border p-6">
-        {/* Progress Bar & Current Operation */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-xs font-semibold mb-2">
-            <span className="text-text">Overall Progress</span>
-            <span className="tnum text-primary font-bold">{percent}%</span>
+          {/* Active Run Card */}
+          <Card className="bg-surface border-border p-6">
+            {/* Progress Bar & Current Operation */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between text-xs font-semibold mb-2">
+                <span className="text-text">Overall Progress</span>
+                <span className="tnum text-primary font-bold">{percent}%</span>
           </div>
           <Progress value={percent} className="h-3" />
         </div>
@@ -367,72 +370,74 @@ export function ProgressView() {
           </div>
         </Card>
       )}
-
-      {/* Live Audit Log Section */}
-      <div className="text-left">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-text">
-            Activity Log ({progress.results.length})
-          </h3>
-          <span className="text-[11px] text-text-muted">Live event stream</span>
         </div>
 
-        <Card className="p-0 overflow-hidden border-border bg-surface">
-          <div className="max-h-[340px] overflow-auto divide-y divide-border text-xs font-mono">
-            {progress.results.length === 0 ? (
-              <div className="p-6 text-center text-text-muted font-sans text-xs">
-                Waiting for first operation to execute...
-              </div>
-            ) : (
-              progress.results.map((res) => (
-                <div
-                  key={res.id}
-                  className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-surface-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    {res.status === "success" && (
-                      <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
-                    )}
-                    {res.status === "failed" && (
-                      <XCircle className="w-4 h-4 text-danger shrink-0" />
-                    )}
-                    {res.status === "skipped" && (
-                      <Shield className="w-4 h-4 text-slate-400 shrink-0" />
-                    )}
-
-                    <span className="font-semibold text-text truncate max-w-[200px] sm:max-w-md">
-                      {res.name}
-                    </span>
-
-                    {res.reason && (
-                      <span className="text-[11px] text-danger truncate">
-                        : {res.reason}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Badge
-                      variant={
-                        res.status === "success"
-                          ? "success"
-                          : res.status === "failed"
-                          ? "danger"
-                          : "secondary"
-                      }
-                      className="text-[10px] py-0 px-1.5 uppercase"
-                    >
-                      {res.status}
-                    </Badge>
-                    <span className="text-[10px] text-slate-400 tnum">
-                      {new Date(res.timestamp).toLocaleTimeString()}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
+        {/* Right Column: Live Audit Log Section */}
+        <div className="lg:col-span-7 space-y-2 text-left">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-text">
+              Activity Log ({progress.results.length})
+            </h3>
+            <span className="text-[11px] text-text-muted">Live event stream</span>
           </div>
-        </Card>
+
+          <Card className="p-0 overflow-hidden border-border bg-surface">
+            <div className="h-[calc(100vh-280px)] min-h-[460px] overflow-auto divide-y divide-border text-xs font-mono">
+              {progress.results.length === 0 ? (
+                <div className="p-12 text-center text-text-muted font-sans text-xs flex flex-col items-center justify-center h-full">
+                  Waiting for first operation to execute...
+                </div>
+              ) : (
+                progress.results.map((res) => (
+                  <div
+                    key={res.id}
+                    className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-surface-muted/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      {res.status === "success" && (
+                        <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+                      )}
+                      {res.status === "failed" && (
+                        <XCircle className="w-4 h-4 text-danger shrink-0" />
+                      )}
+                      {res.status === "skipped" && (
+                        <Shield className="w-4 h-4 text-slate-400 shrink-0" />
+                      )}
+
+                      <span className="font-semibold text-text truncate max-w-[200px] sm:max-w-md">
+                        {res.name}
+                      </span>
+
+                      {res.reason && (
+                        <span className="text-[11px] text-danger truncate">
+                          : {res.reason}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge
+                        variant={
+                          res.status === "success"
+                            ? "success"
+                            : res.status === "failed"
+                            ? "danger"
+                            : "secondary"
+                        }
+                        className="text-[10px] py-0 px-1.5 uppercase"
+                      >
+                        {res.status}
+                      </Badge>
+                      <span className="text-[10px] text-slate-400 tnum">
+                        {new Date(res.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );

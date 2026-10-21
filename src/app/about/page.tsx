@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 flex-1 w-full">
+    <main className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-12 flex-1 w-full">
       <div className="mb-8">
         <Link
           href="/"

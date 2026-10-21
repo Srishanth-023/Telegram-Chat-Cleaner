@@ -100,7 +100,7 @@ export function ReviewView() {
   };
 
   return (
-    <div className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 pb-24 text-left">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 pb-24 text-left">
       {/* Top Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -122,8 +122,11 @@ export function ReviewView() {
         </Badge>
       </div>
 
-      {/* Danger Callouts */}
-      <div className="space-y-3 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Warnings, Consequences, and Itemized List */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Danger Callouts */}
+          <div className="space-y-3">
         {ownedChatsCount > 0 && (
           <div className="p-4 rounded-card bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
             <Crown className="w-5 h-5 text-warning shrink-0 mt-0.5" />
@@ -231,65 +234,70 @@ export function ReviewView() {
         })}
       </div>
 
-      {/* Two-Part Confirmation Card */}
-      <Card className="border-red-200 bg-surface p-6">
-        <div className="flex items-center gap-2 text-danger font-bold text-sm mb-4">
-          <ShieldAlert className="w-5 h-5" />
-          <span>Final Security Confirmation Required</span>
         </div>
 
-        <div className="space-y-4 text-xs">
-          {/* Part 1: Checkbox */}
-          <Checkbox
-            id="confirmation-checkbox"
-            checked={confirmChecked}
-            onCheckedChange={(checked) => setConfirmChecked(!!checked)}
-            label={`I understand that these ${selectedChats.length} conversation(s) will be permanently removed from my Telegram account only, and cannot be undone.`}
-          />
+        {/* Right Column: Sticky Confirmation Card */}
+        <div className="lg:col-span-5 lg:sticky lg:top-20">
+          <Card className="border-red-200 bg-surface p-6">
+            <div className="flex items-center gap-2 text-danger font-bold text-sm mb-4">
+              <ShieldAlert className="w-5 h-5" />
+              <span>Final Security Confirmation Required</span>
+            </div>
 
-          {/* Part 2: Type REMOVE */}
-          <div className="pt-2">
-            <label
-              htmlFor="type-remove-input"
-              className="block font-semibold text-text uppercase tracking-wider text-[11px] mb-1.5"
-            >
-              To confirm, type <span className="font-mono text-danger font-bold">REMOVE</span> in the box below:
-            </label>
-            <Input
-              id="type-remove-input"
-              type="text"
-              placeholder="Type REMOVE"
-              value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
-              mono
-              className="max-w-xs font-bold"
-              autoComplete="off"
-            />
-          </div>
+            <div className="space-y-4 text-xs">
+              {/* Part 1: Checkbox */}
+              <Checkbox
+                id="confirmation-checkbox"
+                checked={confirmChecked}
+                onCheckedChange={(checked) => setConfirmChecked(!!checked)}
+                label={`I understand that these ${selectedChats.length} conversation(s) will be permanently removed from my Telegram account only, and cannot be undone.`}
+              />
+
+              {/* Part 2: Type REMOVE */}
+              <div className="pt-2">
+                <label
+                  htmlFor="type-remove-input"
+                  className="block font-semibold text-text uppercase tracking-wider text-[11px] mb-1.5"
+                >
+                  To confirm, type <span className="font-mono text-danger font-bold">REMOVE</span> in the box below:
+                </label>
+                <Input
+                  id="type-remove-input"
+                  type="text"
+                  placeholder="Type REMOVE"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  mono
+                  className="max-w-xs font-bold"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+
+            <div className="pt-6 mt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => router.push("/dashboard")}
+                className="w-full sm:w-auto"
+              >
+                Cancel & Return to Dashboard
+              </Button>
+
+              <Button
+                variant="danger"
+                size="md"
+                disabled={!isConfirmationSatisfied}
+                onClick={handleStartRemoval}
+                className="w-full sm:w-auto font-semibold px-6"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Remove {selectedChats.length} Conversation{selectedChats.length > 1 ? "s" : ""}
+              </Button>
+            </div>
+          </Card>
         </div>
-
-        <div className="pt-6 mt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={() => router.push("/dashboard")}
-            className="w-full sm:w-auto"
-          >
-            Cancel & Return to Dashboard
-          </Button>
-
-          <Button
-            variant="danger"
-            size="md"
-            disabled={!isConfirmationSatisfied}
-            onClick={handleStartRemoval}
-            className="w-full sm:w-auto font-semibold px-6"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Remove {selectedChats.length} Conversation{selectedChats.length > 1 ? "s" : ""}
-          </Button>
-        </div>
-      </Card>
+      </div>
     </div>
   );
 }

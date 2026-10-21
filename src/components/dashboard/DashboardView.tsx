@@ -162,7 +162,7 @@ export function DashboardView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 pb-28">
+    <div className="flex-1 flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-6 pb-28">
       {/* Top Controls Header */}
       <div className="flex flex-col gap-4 mb-4 text-left">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -406,7 +406,7 @@ export function DashboardView() {
             role="listbox"
             aria-multiselectable="true"
             aria-label="Telegram Conversations"
-            className="overflow-auto max-h-[600px] w-full"
+            className="overflow-auto h-[calc(100vh-320px)] min-h-[500px] w-full"
           >
             <div
               style={{
@@ -446,8 +446,8 @@ export function DashboardView() {
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface border-t border-border py-3.5 px-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface border-t border-border py-3.5 px-4 sm:px-8 lg:px-12">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="tnum font-bold text-sm sm:text-base text-text">
               {selectedCount} selected

@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/Badge";
 
 export default function HomePage() {
   return (
-    <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-16 w-full">
       {/* Hero Section */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary-soft text-primary text-xs font-semibold mb-6 border border-primary/20">
