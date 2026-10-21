@@ -34,12 +34,10 @@ export default function ErrorBoundary({
             Try Again
           </Button>
 
-          <Link href="/" className="w-full sm:w-auto">
-            <Button variant="outline" size="md" className="w-full sm:w-auto">
-              <Home className="w-4 h-4 mr-1.5" />
-              Return Home
-            </Button>
-          </Link>
+          <Button href="/" variant="outline" size="md" className="w-full sm:w-auto">
+            <Home className="w-4 h-4 mr-1.5" />
+            Return Home
+          </Button>
         </div>
       </Card>
     </main>

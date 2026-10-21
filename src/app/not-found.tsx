@@ -14,12 +14,10 @@ export default function NotFound() {
           The requested page does not exist or has been moved.
         </p>
 
-        <Link href="/">
-          <Button size="md" className="font-medium">
-            <Home className="w-4 h-4 mr-1.5" />
-            Back to Home
-          </Button>
-        </Link>
+        <Button href="/" size="md" className="font-medium">
+          <Home className="w-4 h-4 mr-1.5" />
+          Back to Home
+        </Button>
       </Card>
     </main>
   );

@@ -78,24 +78,16 @@ class AuthBridge {
     this.updateState({ currentStep: step, error: null });
   }
 
+  public clearError(): void {
+    if (this.state.error) {
+      this.updateState({ error: null });
+    }
+  }
+
   public async startAuthFlow(phoneNumber: string): Promise<void> {
     const client = requireClient();
     this.isCancelled = false;
     this.updateState({ isLoading: true, error: null });
-
-    // Ensure client is connected to telegram servers over websocket
-    if (!client.connected) {
-      await client.connect();
-    }
-
-    if (await client.checkAuthorization()) {
-      this.updateState({
-        currentStep: "authenticated",
-        isLoading: false,
-        error: null,
-      });
-      return;
-    }
 
     this.phoneDeferred = createDeferred<string>();
     this.phoneDeferred.resolve(phoneNumber);
@@ -106,8 +98,15 @@ class AuthBridge {
           if (this.isCancelled) throw new Error("AUTH_USER_CANCEL");
           if (!this.phoneDeferred) {
             this.phoneDeferred = createDeferred<string>();
+            this.updateState({
+              currentStep: "phone",
+              isLoading: false,
+            });
           }
-          const num = await this.phoneDeferred.promise;
+          const deferred = this.phoneDeferred;
+          this.phoneDeferred = null;
+          const num = await deferred.promise;
+          this.updateState({ isLoading: true, error: null });
           return num;
         },
         phoneCode: async (isCodeViaApp?: boolean) => {
@@ -141,6 +140,10 @@ class AuthBridge {
             isLoading: false,
             error: friendly,
           });
+          // If the error occurred on phone submission, halt the internal loop cleanly
+          if (this.state.currentStep === "phone" || this.state.currentStep === "credentials") {
+            return true;
+          }
           // Return false to allow retrying entering code/password
           return false;
         },
@@ -163,7 +166,7 @@ class AuthBridge {
         isLoading: false,
         error: mapTelegramError(err),
       });
-      throw err;
+      // Do not throw unhandled exception if canceled or caught
     } finally {
       // Clean up deferreds
       this.phoneDeferred = null;
@@ -173,6 +176,7 @@ class AuthBridge {
   }
 
   public submitPhone(phone: string): void {
+    this.updateState({ isLoading: true, error: null });
     if (this.phoneDeferred) {
       this.phoneDeferred.resolve(phone);
       this.phoneDeferred = null;

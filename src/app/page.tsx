@@ -41,24 +41,22 @@ export default function HomePage() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link href="/connect" className="w-full sm:w-auto">
-            <Button size="lg" className="w-full sm:w-auto font-semibold px-8">
-              Get Started
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
+          <Button href="/connect" size="lg" className="w-full sm:w-auto font-semibold px-8">
+            Get Started
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
 
-          <a
+          <Button
             href="https://github.com/Srishanth-023/Telegram-Chat-Cleaner"
             target="_blank"
             rel="noopener noreferrer"
+            variant="outline"
+            size="lg"
             className="w-full sm:w-auto"
           >
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              <Code2 className="w-4 h-4 mr-1 text-text-muted" />
-              Audit Source Code
-            </Button>
-          </a>
+            <Code2 className="w-4 h-4 mr-1 text-text-muted" />
+            Audit Source Code
+          </Button>
         </div>
       </div>
 
@@ -294,12 +292,10 @@ export default function HomePage() {
         </div>
 
         <div className="pt-6 text-center">
-          <Link href="/connect">
-            <Button size="lg" className="font-semibold">
-              Connect to Telegram
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
+          <Button href="/connect" size="lg" className="font-semibold">
+            Connect to Telegram
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
         </div>
       </div>
     </main>

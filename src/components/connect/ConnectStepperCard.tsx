@@ -79,6 +79,9 @@ export function ConnectStepperCard() {
   const handleAuthSuccessRef = React.useRef<() => Promise<void>>();
 
   useEffect(() => {
+    // Prefetch dashboard for instantaneous transition upon login
+    router?.prefetch?.("/dashboard");
+
     // Check for saved encrypted session on mount
     loadEncryptedSession().then((saved) => {
       if (saved) {
@@ -98,7 +101,7 @@ export function ConnectStepperCard() {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [router]);
 
   const getStepIndex = (step: AuthStep): number => {
     switch (step) {
@@ -256,7 +259,9 @@ export function ConnectStepperCard() {
     }
 
     try {
-      await createTelegramClient({ apiId, apiHash });
+      const client = await createTelegramClient({ apiId, apiHash });
+      // Pre-connect WebSocket in background so connection is already hot for phone step
+      client.connect().catch(() => {});
       authBridge.setStep("phone");
     } catch (err: unknown) {
       setClientErrors({ apiId: (err as Error).message });
@@ -554,7 +559,13 @@ export function ConnectStepperCard() {
               type="tel"
               placeholder="+1 234 567 8900"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                authBridge.clearError();
+                if (clientErrors.phone) {
+                  setClientErrors((prev) => ({ ...prev, phone: "" }));
+                }
+              }}
               errorMessage={clientErrors.phone}
               helperText="Must include + and country code (e.g. +1 for US/CA, +44 for UK, +91 for India)"
               mono
@@ -607,7 +618,13 @@ export function ConnectStepperCard() {
               placeholder="12345"
               maxLength={6}
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => {
+                setCode(e.target.value.replace(/\D/g, ""));
+                authBridge.clearError();
+                if (clientErrors.code) {
+                  setClientErrors((prev) => ({ ...prev, code: "" }));
+                }
+              }}
               errorMessage={clientErrors.code}
               helperText="Enter the 5-digit code without spaces"
               mono
@@ -677,7 +694,13 @@ export function ConnectStepperCard() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your 2FA password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  authBridge.clearError();
+                  if (clientErrors.password) {
+                    setClientErrors((prev) => ({ ...prev, password: "" }));
+                  }
+                }}
                 errorMessage={clientErrors.password}
                 autoComplete="current-password"
                 required

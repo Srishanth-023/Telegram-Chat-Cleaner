@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -34,6 +35,10 @@ export function ReviewView() {
   const [confirmText, setConfirmText] = useState("");
 
   useEffect(() => {
+    router?.prefetch?.("/progress");
+    router?.prefetch?.("/dashboard");
+    router?.prefetch?.("/connect");
+
     if (!isAuthenticated()) {
       router.push("/connect");
     }
@@ -82,7 +87,7 @@ export function ReviewView() {
           <p className="text-xs text-text-muted mb-6">
             Please select at least one conversation from your dashboard to review and remove.
           </p>
-          <Button onClick={() => router.push("/dashboard")} size="md">
+          <Button href="/dashboard" size="md">
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Back to Dashboard
           </Button>
@@ -104,13 +109,13 @@ export function ReviewView() {
       {/* Top Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <button
-            onClick={() => router.push("/dashboard")}
+          <Link
+            href="/dashboard"
             className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text mb-2 font-medium"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Conversations
-          </button>
+          </Link>
           <h1 className="text-2xl font-bold tracking-tight text-text">Review & Confirmation</h1>
           <p className="text-xs text-text-muted mt-0.5">
             Carefully review your selection of {selectedChats.length} conversation(s) before proceeding.
@@ -276,9 +281,9 @@ export function ReviewView() {
 
             <div className="pt-6 mt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
               <Button
+                href="/dashboard"
                 variant="outline"
                 size="md"
-                onClick={() => router.push("/dashboard")}
                 className="w-full sm:w-auto"
               >
                 Cancel & Return to Dashboard

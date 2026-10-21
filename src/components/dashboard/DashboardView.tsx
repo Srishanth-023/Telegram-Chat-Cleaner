@@ -84,6 +84,9 @@ export function DashboardView() {
 
   // Initial load & route guard check
   useEffect(() => {
+    router?.prefetch?.("/review");
+    router?.prefetch?.("/connect");
+
     if (!isAuthenticated()) {
       router.push("/connect");
       return;

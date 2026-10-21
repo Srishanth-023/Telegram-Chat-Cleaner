@@ -22,17 +22,31 @@ export function mapTelegramError(error: unknown): FriendlyError {
         (error as Error).message ||
         "";
 
-  // Check for FloodWaitError or FLOOD_WAIT_X
-  const floodMatch = rawMessage.match(/FLOOD_WAIT_(\d+)/) || rawMessage.match(/wait of (\d+) seconds/i);
-  const secondsProp = (error as { seconds?: number }).seconds;
-  if (floodMatch || typeof secondsProp === "number") {
-    const seconds = secondsProp ?? (floodMatch ? parseInt(floodMatch[1], 10) : 60);
+  // Check specific phone and auth errors first
+  if (rawMessage.includes("PHONE_NUMBER_INVALID")) {
     return {
-      title: "Rate Limit Exceeded",
-      message: `Telegram asked us to wait ${seconds}s before making more requests.`,
-      action: "Please wait for the timer to finish.",
-      code: "FLOOD_WAIT",
-      seconds,
+      title: "Invalid Phone Number",
+      message: "The phone number format is not recognized by Telegram.",
+      action: "Include your international country code (e.g. +1 555 123 4567).",
+      code: "PHONE_NUMBER_INVALID",
+    };
+  }
+
+  if (rawMessage.includes("PHONE_NUMBER_FLOOD")) {
+    return {
+      title: "Phone Limit Exceeded",
+      message: "Too many login attempts for this phone number. Telegram has temporarily limited code requests for this number.",
+      action: "Please wait a few hours or use Telegram on your phone/desktop.",
+      code: "PHONE_NUMBER_FLOOD",
+    };
+  }
+
+  if (rawMessage.includes("PHONE_NUMBER_UNREGISTERED")) {
+    return {
+      title: "Account Not Found",
+      message: "There is no Telegram account registered with this phone number.",
+      action: "Please check your number or register an account on Telegram first.",
+      code: "PHONE_NUMBER_UNREGISTERED",
     };
   }
 
@@ -63,21 +77,17 @@ export function mapTelegramError(error: unknown): FriendlyError {
     };
   }
 
-  if (rawMessage.includes("PHONE_NUMBER_INVALID")) {
+  // Check for FloodWaitError or FLOOD_WAIT_X
+  const floodMatch = rawMessage.match(/FLOOD_WAIT_(\d+)/) || rawMessage.match(/wait of (\d+) seconds/i);
+  const secondsProp = (error as { seconds?: number }).seconds;
+  if (floodMatch || (typeof secondsProp === "number" && secondsProp > 0)) {
+    const seconds = secondsProp && secondsProp > 0 ? secondsProp : (floodMatch ? parseInt(floodMatch[1], 10) : 60);
     return {
-      title: "Invalid Phone Number",
-      message: "The phone number format is not recognized by Telegram.",
-      action: "Include your international country code (e.g. +1 555 123 4567).",
-      code: "PHONE_NUMBER_INVALID",
-    };
-  }
-
-  if (rawMessage.includes("PHONE_NUMBER_UNREGISTERED")) {
-    return {
-      title: "Account Not Found",
-      message: "There is no Telegram account registered with this phone number.",
-      action: "Please check your number or register an account on Telegram first.",
-      code: "PHONE_NUMBER_UNREGISTERED",
+      title: "Rate Limit Exceeded",
+      message: `Telegram asked us to wait ${seconds}s before making more requests.`,
+      action: "Please wait for the timer to finish.",
+      code: "FLOOD_WAIT",
+      seconds,
     };
   }
 

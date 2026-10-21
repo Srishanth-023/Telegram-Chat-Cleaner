@@ -8,7 +8,6 @@ import { ShieldCheck, LogOut, Trash2, UserCheck, ChevronDown } from "@/component
 import { getSessionState, subscribeSession, clearInMemorySession } from "@/lib/session/store";
 import { disconnectClient } from "@/lib/telegram/client";
 import { forgetDevice } from "@/lib/session/persist";
-import { Api } from "telegram";
 import { getClient } from "@/lib/telegram/client";
 import { useAppStore } from "@/lib/store";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/Dialog";
@@ -30,10 +29,16 @@ export function Navbar() {
   useInactivityTimeout();
 
   useEffect(() => {
+    // Prefetch all primary navigation routes
+    router?.prefetch?.("/connect");
+    router?.prefetch?.("/about");
+    router?.prefetch?.("/privacy");
+    router?.prefetch?.("/terms");
+
     return subscribeSession((state) => {
       setSession(state);
     });
-  }, []);
+  }, [router]);
 
   const handleDisconnectOnly = async () => {
     try {
@@ -58,6 +63,7 @@ export function Navbar() {
       const client = getClient();
       if (client && client.connected) {
         try {
+          const { Api } = await import("telegram");
           await client.invoke(new Api.auth.LogOut());
         } catch {
           // Ignore RPC logout error if session already revoked
@@ -148,11 +154,9 @@ export function Navbar() {
                   </button>
                 </div>
               ) : pathname !== "/connect" && (
-                <Link href="/connect">
-                  <Button size="sm" variant="primary">
-                    Connect Account
-                  </Button>
-                </Link>
+                <Button href="/connect" size="sm" variant="primary">
+                  Connect Account
+                </Button>
               )}
             </div>
           </div>

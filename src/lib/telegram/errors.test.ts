@@ -35,6 +35,20 @@ describe("mapTelegramError", () => {
     expect(result.code).toBe("NETWORK_ERROR");
   });
 
+  it("maps PHONE_NUMBER_INVALID", () => {
+    const err = new Error("400: PHONE_NUMBER_INVALID");
+    const result = mapTelegramError(err);
+    expect(result.code).toBe("PHONE_NUMBER_INVALID");
+    expect(result.title).toBe("Invalid Phone Number");
+  });
+
+  it("maps PHONE_NUMBER_FLOOD", () => {
+    const err = new Error("420: PHONE_NUMBER_FLOOD");
+    const result = mapTelegramError(err);
+    expect(result.code).toBe("PHONE_NUMBER_FLOOD");
+    expect(result.title).toBe("Phone Limit Exceeded");
+  });
+
   it("handles null or empty error safely", () => {
     const result = mapTelegramError(null);
     expect(result.title).toBe("Unknown Error");

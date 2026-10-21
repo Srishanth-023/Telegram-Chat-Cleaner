@@ -57,6 +57,9 @@ export function ProgressView() {
 
   // Subscribe to queue
   useEffect(() => {
+    router?.prefetch?.("/dashboard");
+    router?.prefetch?.("/connect");
+
     if (!isAuthenticated()) {
       router.push("/connect");
       return;
