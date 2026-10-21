@@ -248,72 +248,6 @@ export function DashboardView() {
                 </button>
               )}
             </div>
-
-            {/* Desktop Archived Filter Toggle */}
-            <div className="hidden md:inline-flex rounded-control border border-border bg-surface p-1 text-xs select-none shrink-0">
-              {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setArchivedFilter(mode)}
-                  className={clsx(
-                    "px-3 py-1.5 rounded-[6px] font-medium capitalize transition-colors min-h-[32px]",
-                    archivedFilter === mode
-                      ? "bg-primary text-white"
-                      : "text-text-muted hover:text-text"
-                  )}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
-
-            {/* Desktop Sort Selector */}
-            <div className="hidden md:flex items-center gap-1.5 bg-surface border border-border rounded-control px-2.5 h-10 text-xs shrink-0">
-              <ArrowUpDown className="w-3.5 h-3.5 text-text-muted" />
-              <select
-                value={sortField}
-                onChange={(e) => setSortField(e.target.value as SortField)}
-                className="bg-transparent text-text font-medium focus:outline-none cursor-pointer"
-                aria-label="Sort by field"
-              >
-                <option value="lastActivity">Recent Activity</option>
-                <option value="name">Name</option>
-                <option value="kind">Type</option>
-              </select>
-              <button
-                onClick={toggleSortDirection}
-                className="p-1.5 text-text-muted hover:text-text rounded-control min-h-[32px] min-w-[32px] flex items-center justify-center"
-                title={sortAscending ? "Ascending" : "Descending"}
-                aria-label={sortAscending ? "Sort ascending" : "Sort descending"}
-              >
-                {sortAscending ? "▲" : "▼"}
-              </button>
-            </div>
-          </div>
-
-          {/* Desktop Type Filter Chips */}
-          <div className="hidden md:flex items-center gap-1.5 mt-2.5 text-xs select-none">
-            <span className="text-text-muted font-medium mr-1">Types:</span>
-            {[
-              { id: "all", label: "All" },
-              { id: "private", label: "Private" },
-              { id: "bot", label: "Bots" },
-              { id: "group", label: "Groups" },
-              { id: "channel", label: "Channels" },
-            ].map((type) => (
-              <button
-                key={type.id}
-                onClick={() => setTypeFilter(type.id as TypeFilter)}
-                className={clsx(
-                  "px-3 py-1 rounded-full border transition-all text-xs font-medium",
-                  typeFilter === type.id
-                    ? "bg-primary-soft border-primary text-primary font-semibold"
-                    : "border-border bg-surface text-text-muted hover:border-slate-300 hover:text-text"
-                )}
-              >
-                {type.label}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -330,7 +264,8 @@ export function DashboardView() {
                 <Square className="w-4 h-4 text-text-muted shrink-0" />
               )}
               <span>
-                Select All Filtered ({filteredSelectableIds.length})
+                <span className="sm:hidden">Select All ({filteredSelectableIds.length})</span>
+                <span className="hidden sm:inline">Select All Filtered ({filteredSelectableIds.length})</span>
               </span>
             </button>
 
@@ -350,105 +285,223 @@ export function DashboardView() {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 rounded-card border border-border bg-surface overflow-hidden relative flex flex-col min-h-0">
-        {/* Loading State with Determinate Counter */}
-        {isLoadingChats && (
-          <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
-            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            <div>
-              <h3 className="font-semibold text-text text-base">Loading Telegram Conversations</h3>
-              <p className="text-xs text-text-muted mt-1 tnum">
-                {loadProgress > 0 ? `Loaded ${loadProgress} chats...` : "Paginating dialogs from Telegram..."}
-              </p>
+      {/* Main Layout Area: Two-Column on Tablet/Desktop, Single-Column on Mobile */}
+      <div className="flex-1 flex flex-col md:flex-row gap-5 min-h-0 items-start">
+        {/* Left Filter Rail (Tablet md to lg and Desktop) */}
+        <aside className="hidden md:flex flex-col gap-4 w-56 lg:w-64 shrink-0 text-left bg-surface border border-border rounded-card p-4 sticky top-20">
+          <div>
+            <span className="text-xs font-bold text-text uppercase tracking-wider block mb-2">
+              Chat Type
+            </span>
+            <div className="flex flex-col gap-1">
+              {[
+                { id: "all", label: "All Types" },
+                { id: "private", label: "Direct Messages" },
+                { id: "bot", label: "Bots" },
+                { id: "group", label: "Groups" },
+                { id: "channel", label: "Channels" },
+              ].map((type) => (
+                <button
+                  key={type.id}
+                  onClick={() => setTypeFilter(type.id as TypeFilter)}
+                  className={clsx(
+                    "min-h-[36px] px-2.5 py-1.5 rounded-control text-xs font-medium transition-colors text-left flex items-center justify-between",
+                    typeFilter === type.id
+                      ? "bg-primary-soft text-primary font-semibold"
+                      : "text-text hover:bg-surface-muted"
+                  )}
+                >
+                  <span>{type.label}</span>
+                  {typeFilter === type.id && <span className="text-primary font-bold">✓</span>}
+                </button>
+              ))}
             </div>
           </div>
-        )}
 
-        {/* Error State */}
-        {!isLoadingChats && chatsError && (
-          <div className="p-8 text-center flex flex-col items-center justify-center space-y-3">
-            <AlertCircle className="w-10 h-10 text-danger" />
-            <h3 className="font-semibold text-text text-base">{chatsError.title}</h3>
-            <p className="text-xs text-text-muted max-w-md">{chatsError.message}</p>
-            <Button size="sm" onClick={loadConversations} className="mt-2 text-xs">
-              Retry Loading Chats
-            </Button>
+          <div className="pt-3 border-t border-border">
+            <span className="text-xs font-bold text-text uppercase tracking-wider block mb-2">
+              Folder
+            </span>
+            <div className="grid grid-cols-3 gap-1">
+              {(["all", "active", "archived"] as ArchivedFilter[]).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setArchivedFilter(mode)}
+                  className={clsx(
+                    "min-h-[32px] px-1 py-1 rounded-control border text-xs font-medium capitalize transition-colors flex items-center justify-center",
+                    archivedFilter === mode
+                      ? "bg-primary text-white border-primary"
+                      : "border-border bg-surface text-text hover:bg-surface-muted"
+                  )}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
 
-        {/* Empty State */}
-        {!isLoadingChats && !chatsError && sortedChats.length === 0 && (
-          <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
-            <Inbox className="w-10 h-10 text-slate-300" />
-            <h3 className="font-semibold text-text text-base">No Conversations Found</h3>
-            <p className="text-xs text-text-muted max-w-sm">
-              {chats.length === 0
-                ? "Your Telegram account has no active or archived dialogs."
-                : "No conversations match your search query and filters."}
-            </p>
-            {(searchQuery || typeFilter !== "all" || archivedFilter !== "all") && (
+          <div className="pt-3 border-t border-border">
+            <span className="text-xs font-bold text-text uppercase tracking-wider block mb-2">
+              Sort By
+            </span>
+            <select
+              value={sortField}
+              onChange={(e) => setSortField(e.target.value as SortField)}
+              className="w-full h-9 px-2 bg-surface border border-border rounded-control text-xs text-text font-medium focus:outline-none cursor-pointer mb-2"
+              aria-label="Sort by field"
+            >
+              <option value="lastActivity">Recent Activity</option>
+              <option value="name">Name</option>
+              <option value="kind">Type</option>
+            </select>
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => {
+                  if (!sortAscending) toggleSortDirection();
+                }}
+                className={clsx(
+                  "flex-1 min-h-[32px] px-2 py-1 rounded-control border text-[11px] font-medium text-center",
+                  sortAscending
+                    ? "bg-primary-soft border-primary text-primary font-semibold"
+                    : "border-border text-text-muted hover:bg-surface-muted"
+                )}
+              >
+                Asc ▲
+              </button>
+              <button
+                onClick={() => {
+                  if (sortAscending) toggleSortDirection();
+                }}
+                className={clsx(
+                  "flex-1 min-h-[32px] px-2 py-1 rounded-control border text-[11px] font-medium text-center",
+                  !sortAscending
+                    ? "bg-primary-soft border-primary text-primary font-semibold"
+                    : "border-border text-text-muted hover:bg-surface-muted"
+                )}
+              >
+                Desc ▼
+              </button>
+            </div>
+          </div>
+
+          {activeFilterCount > 0 && (
+            <div className="pt-3 border-t border-border">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setSearchInput("");
-                  setSearchQuery("");
                   setTypeFilter("all");
                   setArchivedFilter("all");
+                  setSortField("lastActivity");
                 }}
-                className="text-xs mt-2"
+                className="w-full text-xs min-h-[34px]"
               >
-                Reset All Filters
+                Reset Filters ({activeFilterCount})
               </Button>
-            )}
-          </div>
-        )}
-
-        {/* Virtualized Chat List with Overscroll Contain */}
-        {!isLoadingChats && !chatsError && sortedChats.length > 0 && (
-          <div
-            ref={parentRef}
-            role="listbox"
-            aria-multiselectable="true"
-            aria-label="Telegram Conversations"
-            className="overflow-y-auto overscroll-contain h-[calc(100dvh-270px)] min-h-[400px] w-full"
-          >
-            <div
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                width: "100%",
-                position: "relative",
-              }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const item = sortedChats[virtualRow.index];
-                const isSelected = selectedIds.has(item.id);
-
-                return (
-                  <div
-                    key={item.id}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start}px)`,
-                    }}
-                  >
-                    <ChatRow
-                      item={item}
-                      isSelected={isSelected}
-                      onToggle={toggleSelect}
-                      onRangeSelect={(id) => selectRange(id, filteredSelectableIds)}
-                    />
-                  </div>
-                );
-              })}
             </div>
-          </div>
-        )}
+          )}
+        </aside>
+
+        {/* Right Main Column */}
+        <div className="flex-1 flex flex-col min-w-0 w-full rounded-card border border-border bg-surface overflow-hidden relative min-h-0">
+          {/* Loading State with Determinate Counter */}
+          {isLoadingChats && (
+            <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <div>
+                <h3 className="font-semibold text-text text-base">Loading Telegram Conversations</h3>
+                <p className="text-xs text-text-muted mt-1 tnum">
+                  {loadProgress > 0 ? `Loaded ${loadProgress} chats...` : "Paginating dialogs from Telegram..."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {!isLoadingChats && chatsError && (
+            <div className="p-8 text-center flex flex-col items-center justify-center space-y-3">
+              <AlertCircle className="w-10 h-10 text-danger" />
+              <h3 className="font-semibold text-text text-base">{chatsError.title}</h3>
+              <p className="text-xs text-text-muted max-w-md">{chatsError.message}</p>
+              <Button size="sm" onClick={loadConversations} className="mt-2 text-xs">
+                Retry Loading Chats
+              </Button>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoadingChats && !chatsError && sortedChats.length === 0 && (
+            <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
+              <Inbox className="w-10 h-10 text-slate-300" />
+              <h3 className="font-semibold text-text text-base">No Conversations Found</h3>
+              <p className="text-xs text-text-muted max-w-sm">
+                {chats.length === 0
+                  ? "Your Telegram account has no active or archived dialogs."
+                  : "No conversations match your search query and filters."}
+              </p>
+              {(searchQuery || typeFilter !== "all" || archivedFilter !== "all") && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchInput("");
+                    setSearchQuery("");
+                    setTypeFilter("all");
+                    setArchivedFilter("all");
+                  }}
+                  className="text-xs mt-2"
+                >
+                  Reset All Filters
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Virtualized Chat List with Overscroll Contain */}
+          {!isLoadingChats && !chatsError && sortedChats.length > 0 && (
+            <div
+              ref={parentRef}
+              role="listbox"
+              aria-multiselectable="true"
+              aria-label="Telegram Conversations"
+              className="overflow-y-auto overscroll-contain h-[calc(100dvh-280px)] min-h-[420px] w-full"
+            >
+              <div
+                style={{
+                  height: `${rowVirtualizer.getTotalSize()}px`,
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
+                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                  const item = sortedChats[virtualRow.index];
+                  const isSelected = selectedIds.has(item.id);
+
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: `${virtualRow.size}px`,
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                    >
+                      <ChatRow
+                        item={item}
+                        isSelected={isSelected}
+                        onToggle={toggleSelect}
+                        onRangeSelect={(id) => selectRange(id, filteredSelectableIds)}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Sticky Bottom Action Bar with Safe Area Inset */}

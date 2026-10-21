@@ -124,7 +124,7 @@ export function ReviewView() {
   };
 
   return (
-    <div className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-40 lg:pb-24 text-left">
+    <div className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-40 md:pb-24 text-left">
       {/* Top Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
@@ -146,9 +146,9 @@ export function ReviewView() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Column: Warnings, Consequences, and Collapsible Itemized List */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className="md:col-span-7 space-y-4">
           {/* Danger Callouts */}
           {ownedChatsCount > 0 && (
             <div className="p-3.5 rounded-card bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
@@ -264,11 +264,11 @@ export function ReviewView() {
                           className="flex items-center justify-between px-4 py-3 text-xs hover:bg-surface-muted/40 transition-colors min-h-[52px]"
                         >
                           <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                            <span className="font-semibold text-text truncate max-w-[200px] sm:max-w-md">
+                            <span className="font-semibold text-text truncate max-w-[120px] xs:max-w-[200px] sm:max-w-md">
                               {item.name}
                             </span>
                             {item.username && (
-                              <span className="font-mono text-slate-400 text-[11px] truncate">
+                              <span className="font-mono text-slate-400 text-[11px] truncate max-w-[80px] xs:max-w-[120px]">
                                 @{item.username}
                               </span>
                             )}
@@ -303,7 +303,7 @@ export function ReviewView() {
         </div>
 
         {/* Right Column / Sticky Bottom on Mobile: Confirmation Panel */}
-        <div className="lg:col-span-5 lg:sticky lg:top-20">
+        <div className="md:col-span-5 md:sticky md:top-20">
           <Card className="border-red-200 bg-surface p-5 sm:p-6">
             <div className="flex items-center gap-2 text-danger font-bold text-sm mb-3">
               <ShieldAlert className="w-5 h-5 shrink-0" />

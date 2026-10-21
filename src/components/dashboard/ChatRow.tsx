@@ -153,7 +153,7 @@ export const ChatRow = memo(function ChatRow({
       {/* Info: Name & Username */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="font-semibold text-sm text-text truncate max-w-[240px] sm:max-w-md">
+          <span className="font-semibold text-sm text-text truncate max-w-[130px] xs:max-w-[200px] sm:max-w-md lg:max-w-lg">
             {item.name}
           </span>
 
@@ -182,7 +182,9 @@ export const ChatRow = memo(function ChatRow({
 
         <div className="flex items-center gap-2 mt-0.5 text-xs text-text-muted">
           {item.username && (
-            <span className="font-mono text-slate-500 truncate">@{item.username}</span>
+            <span className="font-mono text-slate-500 truncate max-w-[100px] xs:max-w-[160px]">
+              @{item.username}
+            </span>
           )}
           <span className="inline-flex items-center gap-1 capitalize">
             {typeIcon}

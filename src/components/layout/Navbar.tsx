@@ -137,12 +137,7 @@ export function Navbar() {
 
           {/* Right-aligned Navigation Links and Actions */}
           <div className="flex items-center gap-3 sm:gap-6">
-            <nav
-              className={clsx(
-                "items-center gap-3 sm:gap-6 text-xs font-medium text-text-muted",
-                session.isConnected ? "hidden sm:flex" : "flex"
-              )}
-            >
+            <nav className="hidden sm:flex items-center gap-4 lg:gap-6 text-xs font-medium text-text-muted">
               <Link
                 href="/about"
                 className={clsx(

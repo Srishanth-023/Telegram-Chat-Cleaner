@@ -88,7 +88,7 @@ export function OtpInput({
 
   return (
     <div
-      className={clsx("flex items-center justify-center gap-2 sm:gap-3 py-2", className)}
+      className={clsx("flex items-center justify-center gap-1.5 xs:gap-2 sm:gap-3 py-2", className)}
       role="group"
       aria-label="5-digit Telegram verification code"
     >
@@ -110,7 +110,7 @@ export function OtpInput({
           disabled={disabled}
           aria-label={`Digit ${index + 1} of ${length}`}
           className={clsx(
-            "w-12 h-14 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl font-bold font-mono rounded-control border bg-surface text-text transition-all",
+            "w-10 h-12 xs:w-12 xs:h-14 sm:w-14 sm:h-14 text-center text-lg xs:text-xl sm:text-2xl font-bold font-mono rounded-control border bg-surface text-text transition-all",
             "focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent select-all",
             hasError
               ? "border-danger focus:ring-danger text-danger bg-danger-soft/20"

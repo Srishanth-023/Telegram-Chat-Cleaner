@@ -291,9 +291,9 @@ export function ProgressView() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
         {/* Left Column: Progress Controls & Status Summary */}
-        <div className="lg:col-span-5 space-y-4">
+        <div className="md:col-span-5 space-y-4">
           {/* Flood-Wait Live Alert */}
           {progress.remainingSecondsWait && progress.remainingSecondsWait > 0 && (
             <div
@@ -492,7 +492,7 @@ export function ProgressView() {
         </div>
 
         {/* Right Column: Live Audit Log Section */}
-        <div className="lg:col-span-7 space-y-2 text-left">
+        <div className="md:col-span-7 space-y-2 text-left">
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-text">
               Activity Log ({progress.results.length})
@@ -523,12 +523,12 @@ export function ProgressView() {
                         <Shield className="w-4 h-4 text-slate-400 shrink-0" />
                       )}
 
-                      <span className="font-semibold text-text truncate max-w-[150px] sm:max-w-md">
+                      <span className="font-semibold text-text truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">
                         {res.name}
                       </span>
 
                       {res.reason && (
-                        <span className="text-[11px] text-danger truncate">
+                        <span className="text-[11px] text-danger truncate max-w-[90px] xs:max-w-[140px]">
                           : {res.reason}
                         </span>
                       )}

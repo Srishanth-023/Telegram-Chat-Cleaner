@@ -21,27 +21,27 @@ import { Badge } from "@/components/ui/Badge";
 
 export default function HomePage() {
   return (
-    <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-12 sm:py-16 pb-24 sm:pb-16 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-3 xs:px-4 sm:px-8 lg:px-12 py-8 xs:py-12 sm:py-16 pb-24 sm:pb-16 w-full">
       {/* Hero Section */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
+      <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary-soft text-primary text-xs font-semibold mb-6 border border-primary/20">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Client-Side Architecture: Zero Backend Storage</span>
+          <ShieldCheck className="w-4 h-4 shrink-0" />
+          <span className="truncate">Client-Side Architecture: Zero Backend</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-text leading-[1.15] mb-6">
+        <h1 className="text-2xl xs:text-3xl sm:text-5xl font-extrabold tracking-tight text-text leading-[1.15] mb-4 sm:mb-6">
           Clean unwanted Telegram chats{" "}
           <span className="text-primary block sm:inline">from your account only.</span>
         </h1>
 
-        <p className="text-base sm:text-lg text-text-muted leading-relaxed max-w-2xl mx-auto mb-8">
+        <p className="text-sm sm:text-lg text-text-muted leading-relaxed max-w-2xl mx-auto mb-6 sm:mb-8">
           A secure, high-performance web tool connecting directly to Telegram via your browser.
           Bulk-remove conversations with full review and two-step confirmation. Never deletes for
           the other party.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button href="/connect" size="lg" className="w-full sm:w-auto font-semibold px-8">
+          <Button href="/connect" size="lg" className="w-full sm:w-auto font-semibold px-8 min-h-[44px]">
             Get Started
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
@@ -88,56 +88,56 @@ export default function HomePage() {
 
           {/* Sample Rows */}
           <div className="divide-y divide-border text-left">
-            <div className="p-3.5 flex items-center justify-between bg-primary-soft/30">
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded border border-primary bg-primary text-white flex items-center justify-center">
+            <div className="p-3 sm:p-3.5 flex items-center justify-between bg-primary-soft/30 gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-4 h-4 rounded border border-primary bg-primary text-white flex items-center justify-center shrink-0">
                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                 </div>
-                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs shrink-0">
                   CN
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-text">Crypto Signals & News</div>
-                  <div className="text-[11px] text-text-muted">@cryptonews_broadcast</div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-text truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">Crypto Signals & News</div>
+                  <div className="text-[11px] text-text-muted truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">@cryptonews_broadcast</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <Badge variant="secondary" className="text-[10px]">Channel</Badge>
                 <span className="text-[11px] text-text-muted font-mono">3d ago</span>
               </div>
             </div>
 
-            <div className="p-3.5 flex items-center justify-between bg-primary-soft/30">
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded border border-primary bg-primary text-white flex items-center justify-center">
+            <div className="p-3 sm:p-3.5 flex items-center justify-between bg-primary-soft/30 gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-4 h-4 rounded border border-primary bg-primary text-white flex items-center justify-center shrink-0">
                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                 </div>
-                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0">
                   SB
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-text">Spam Alert Bot</div>
-                  <div className="text-[11px] text-text-muted">@spambot_notifier</div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-text truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">Spam Alert Bot</div>
+                  <div className="text-[11px] text-text-muted truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">@spambot_notifier</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <Badge variant="secondary" className="text-[10px]">Bot</Badge>
                 <span className="text-[11px] text-text-muted font-mono">1w ago</span>
               </div>
             </div>
 
-            <div className="p-3.5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded border border-border bg-surface" />
-                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-bold text-xs">
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-4 h-4 rounded border border-border bg-surface shrink-0" />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-bold text-xs shrink-0">
                   JD
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-text">John Doe</div>
-                  <div className="text-[11px] text-text-muted">@johndoe</div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-text truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">John Doe</div>
+                  <div className="text-[11px] text-text-muted truncate max-w-[110px] xs:max-w-[180px] sm:max-w-md">@johndoe</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <Badge variant="secondary" className="text-[10px]">Private</Badge>
                 <span className="text-[11px] text-text-muted font-mono">Yesterday</span>
               </div>
@@ -145,9 +145,9 @@ export default function HomePage() {
           </div>
 
           {/* Action Strip */}
-          <div className="p-3 bg-surface border-t border-border flex items-center justify-between text-xs">
-            <span className="font-semibold text-text font-mono">2 conversations selected</span>
-            <span className="px-3 py-1 bg-primary text-white rounded font-medium">Review Selection (2)</span>
+          <div className="p-3 bg-surface border-t border-border flex items-center justify-between text-xs gap-2">
+            <span className="font-semibold text-text font-mono truncate">2 conversations selected</span>
+            <span className="px-3 py-1 bg-primary text-white rounded font-medium shrink-0">Review Selection (2)</span>
           </div>
         </div>
       </div>
