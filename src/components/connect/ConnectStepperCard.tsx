@@ -326,7 +326,7 @@ export function ConnectStepperCard() {
           <div className="p-6 rounded-card bg-surface border border-border space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary-soft text-primary text-xs font-semibold border border-primary/20">
               <ShieldCheck className="w-4 h-4" />
-              <span>Zero-Backend Architecture</span>
+              <span>100% Client-Side Privacy</span>
             </div>
 
             <h2 className="text-xl font-bold tracking-tight text-text">
@@ -334,38 +334,29 @@ export function ConnectStepperCard() {
             </h2>
 
             <p className="text-xs text-text-muted leading-relaxed">
-              This application compiles to static assets and connects directly from your web browser to Telegram data centers over secure WebSockets using GramJS. Your credentials and session keys are never transmitted to any third-party server.
+              Connects directly from your browser to Telegram via secure WebSockets. Your keys and session never leave your device.
             </p>
 
-            <div className="space-y-3 pt-2 text-xs border-t border-border">
-              <div className="flex items-start gap-2.5 text-text-muted">
+            <div className="space-y-3 pt-3 text-xs border-t border-border">
+              <div className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded bg-emerald-100 text-success flex items-center justify-center shrink-0 text-[10px] font-bold">
                   1
                 </div>
-                <div>
-                  <strong className="text-text block">Never deletes for others</strong>
-                  <span>Every removal operation hardcodes <code className="font-mono text-text">revoke: false</code>. Removals apply strictly to your own account view.</span>
-                </div>
+                <span className="font-semibold text-text">Never deletes for others</span>
               </div>
 
-              <div className="flex items-start gap-2.5 text-text-muted">
+              <div className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded bg-blue-100 text-primary flex items-center justify-center shrink-0 text-[10px] font-bold">
                   2
                 </div>
-                <div>
-                  <strong className="text-text block">Ephemeral in-memory session</strong>
-                  <span>By default, session data exists solely in browser RAM. Closing the tab wipes all tokens immediately.</span>
-                </div>
+                <span className="font-semibold text-text">Ephemeral in-memory session</span>
               </div>
 
-              <div className="flex items-start gap-2.5 text-text-muted">
+              <div className="flex items-center gap-2.5">
                 <div className="w-5 h-5 rounded bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-[10px] font-bold">
                   3
                 </div>
-                <div>
-                  <strong className="text-text block">Zero secret logging</strong>
-                  <span>Enforced by automated tests: passwords, 2FA codes, and hash strings are never written to browser console.</span>
-                </div>
+                <span className="font-semibold text-text">Zero secret logging</span>
               </div>
             </div>
           </div>
