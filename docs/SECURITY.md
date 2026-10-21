@@ -50,7 +50,7 @@ When the user explicitly checks *"Remember me on this device"*, persistence adhe
 Deployed via `vercel.json` and Netlify/Cloudflare `public/_headers`:
 
 ```http
-Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' wss://*.web.telegram.org https://*.web.telegram.org; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' wss://*.web.telegram.org https://*.web.telegram.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'
 Referrer-Policy: no-referrer
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY

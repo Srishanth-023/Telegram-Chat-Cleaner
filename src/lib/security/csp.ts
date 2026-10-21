@@ -1,14 +1,14 @@
 export const CSP_POLICY = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "connect-src 'self' wss://*.web.telegram.org https://*.web.telegram.org",
   "object-src 'none'",
-  "base-uri 'none'",
+  "base-uri 'self'",
   "frame-ancestors 'none'",
-  "form-action 'none'",
+  "form-action 'self'",
 ].join("; ");
 
 export const SECURITY_HEADERS = {
