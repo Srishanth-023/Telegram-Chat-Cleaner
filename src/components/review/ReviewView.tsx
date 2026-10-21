@@ -15,7 +15,7 @@ import {
   Megaphone,
   CheckCircle2,
   Info,
-} from "lucide-react";
+} from "@/components/ui/Icons";
 import { useAppStore } from "@/lib/store";
 import { isAuthenticated } from "@/lib/security/guards";
 import type { ChatItem, ChatKind } from "@/lib/telegram/dialogs";
@@ -232,7 +232,7 @@ export function ReviewView() {
       </div>
 
       {/* Two-Part Confirmation Card */}
-      <Card className="border-red-200 bg-surface shadow-md p-6">
+      <Card className="border-red-200 bg-surface p-6">
         <div className="flex items-center gap-2 text-danger font-bold text-sm mb-4">
           <ShieldAlert className="w-5 h-5" />
           <span>Final Security Confirmation Required</span>
@@ -283,7 +283,7 @@ export function ReviewView() {
             size="md"
             disabled={!isConfirmationSatisfied}
             onClick={handleStartRemoval}
-            className="w-full sm:w-auto font-semibold px-6 shadow-sm"
+            className="w-full sm:w-auto font-semibold px-6"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Remove {selectedChats.length} Conversation{selectedChats.length > 1 ? "s" : ""}

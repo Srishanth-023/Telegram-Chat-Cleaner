@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "@/components/ui/Icons";
 
 export function HttpsWarningBanner() {
   const [isHttp, setIsHttp] = useState(false);
@@ -23,7 +23,7 @@ export function HttpsWarningBanner() {
   return (
     <div
       role="alert"
-      className="bg-amber-500 text-white text-xs font-medium px-4 py-2 text-center flex items-center justify-center gap-2 shadow-xs"
+      className="bg-amber-600 text-white text-xs font-medium px-4 py-2 text-center flex items-center justify-center gap-2"
     >
       <AlertTriangle className="w-4 h-4 shrink-0" />
       <span>

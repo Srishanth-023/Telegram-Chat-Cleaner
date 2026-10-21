@@ -1,12 +1,12 @@
 # Telegram Chat Cleaner
 
-> **Secure, client-only web application to bulk-remove unwanted conversations from your personal Telegram account—never deleting messages for the other party.**
+> **Secure, client-only web application to bulk-remove unwanted conversations from your personal Telegram account: never deleting messages for the other party.**
 
 Telegram Chat Cleaner runs entirely in your web browser. Connections are established directly to Telegram's MTProto servers over WebSockets using [GramJS](https://github.com/gram-js/gramjs). There is **no backend**, **no database**, and **no server-side session storage**. The host serves only static files.
 
 ---
 
-## 🛡️ Core Security & Privacy Promise
+## Core Security & Privacy Promise
 
 > **"Your API credentials, login code, password, and session never leave your browser, and nothing is removed without your explicit confirmation."**
 
@@ -18,7 +18,7 @@ Telegram Chat Cleaner runs entirely in your web browser. Connections are establi
 
 ---
 
-## ✨ Features
+## Features
 
 - **Direct MTProto over WebSocket**: Connects directly to Telegram using GramJS with automated retry and keep-alive handling.
 - **Guided Authentication Stepper**: 4-step wizard for API credentials, international phone verification, 5-digit login code, and optional Cloud Password (2FA).
@@ -33,7 +33,7 @@ Telegram Chat Cleaner runs entirely in your web browser. Connections are establi
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Choice | Details |
 | :--- | :--- | :--- |
@@ -49,7 +49,7 @@ Telegram Chat Cleaner runs entirely in your web browser. Connections are establi
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18.x or 20.x
@@ -75,7 +75,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🧪 Testing & Verification
+## Testing & Verification
 
 Run all test suites and quality gates:
 
@@ -98,7 +98,7 @@ npm run build
 
 ---
 
-## 🔑 How to Get Your Telegram API Credentials
+## How to Get Your Telegram API Credentials
 
 To connect directly to the Telegram MTProto API, you must provide your own API credentials:
 
@@ -110,7 +110,7 @@ To connect directly to the Telegram MTProto API, you must provide your own API c
 
 ---
 
-## 🌐 Production Deployment
+## Production Deployment
 
 Because Telegram Chat Cleaner compiles to static assets (`output: 'export'`), it can be hosted on any static hosting provider.
 
@@ -127,7 +127,7 @@ Static headers are provided in `public/_headers` and will automatically be appli
 
 ---
 
-## ⚖️ Disclaimer & License
+## Disclaimer & License
 
 This is an unofficial open-source utility developed under the MIT License. It communicates directly with Telegram servers using official MTProto APIs. This project is not affiliated with, authorized, maintained, sponsored, or endorsed by Telegram FZ-LLC or any of its affiliates. Always comply with [Telegram's Terms of Service](https://telegram.org/tos).
 

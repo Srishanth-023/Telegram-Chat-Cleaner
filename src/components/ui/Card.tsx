@@ -8,7 +8,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function Card({ className, variant = "default", children, ...props }: CardProps) {
   const variantStyles = {
-    default: "bg-surface border-border text-text shadow-sm",
+    default: "bg-surface border-border text-text",
     muted: "bg-surface-muted border-border text-text",
     danger: "bg-danger-soft border-red-200 text-danger",
     warning: "bg-warning-bg border-amber-200 text-warning",

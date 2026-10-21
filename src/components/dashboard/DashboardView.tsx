@@ -15,7 +15,7 @@ import {
   Inbox,
   Filter,
   X,
-} from "lucide-react";
+} from "@/components/ui/Icons";
 import { useAppStore, TypeFilter, ArchivedFilter, SortField } from "@/lib/store";
 import { fetchAllDialogs, ChatItem } from "@/lib/telegram/dialogs";
 import { requireClient, getClient } from "@/lib/telegram/client";
@@ -346,7 +346,7 @@ export function DashboardView() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 rounded-card border border-border bg-surface overflow-hidden shadow-xs relative flex flex-col">
+      <div className="flex-1 rounded-card border border-border bg-surface overflow-hidden relative flex flex-col">
         {/* Loading State with Determinate Counter */}
         {isLoadingChats && (
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
@@ -446,7 +446,7 @@ export function DashboardView() {
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface/95 backdrop-blur-md border-t border-border py-3.5 px-4 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-surface border-t border-border py-3.5 px-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="tnum font-bold text-sm sm:text-base text-text">
@@ -468,7 +468,7 @@ export function DashboardView() {
               variant="primary"
               disabled={selectedCount === 0}
               onClick={() => router.push("/review")}
-              className="font-semibold px-6 shadow-sm"
+              className="font-semibold px-6"
             >
               Review Selection ({selectedCount})
             </Button>

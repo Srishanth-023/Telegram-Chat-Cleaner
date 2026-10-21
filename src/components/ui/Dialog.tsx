@@ -2,7 +2,7 @@
 
 import React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X } from "@/components/ui/Icons";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -19,7 +19,7 @@ export const DialogOverlay = React.forwardRef<
     ref={ref}
     className={twMerge(
       clsx(
-        "fixed inset-0 z-50 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in-0 duration-200",
+        "fixed inset-0 z-50 bg-black/50 transition-opacity animate-in fade-in-0 duration-200",
         className
       )
     )}
@@ -39,7 +39,7 @@ export const DialogContent = React.forwardRef<
       className={twMerge(
         clsx(
           "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4",
-          "border border-border bg-surface p-6 shadow-xl rounded-card duration-200",
+          "border border-border bg-surface p-6 rounded-card duration-200",
           "animate-in fade-in-0 zoom-in-95 focus:outline-none",
           className
         )

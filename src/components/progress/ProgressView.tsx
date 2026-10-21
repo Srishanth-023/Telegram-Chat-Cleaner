@@ -5,18 +5,17 @@ import { useRouter } from "next/navigation";
 import {
   Play,
   Pause,
-  StopCircle,
-  CheckCircle2,
   XCircle,
+  CheckCircle2,
   AlertTriangle,
-  Clock,
-  Download,
   ArrowLeft,
   LogOut,
   RefreshCw,
   Shield,
   FileSpreadsheet,
-} from "lucide-react";
+  Clock,
+  StopCircle,
+} from "@/components/ui/Icons";
 import { useAppStore } from "@/lib/store";
 import { removalQueue, QueueProgress, ItemResult } from "@/lib/telegram/queue";
 import { disconnectClient } from "@/lib/telegram/client";
@@ -198,10 +197,10 @@ export function ProgressView() {
       {progress.remainingSecondsWait && progress.remainingSecondsWait > 0 && (
         <div
           role="alert"
-          className="mb-6 p-4 rounded-card bg-amber-50 border border-amber-300 text-amber-900 flex items-center justify-between gap-4 animate-pulse"
+          className="mb-6 p-4 rounded-card bg-amber-50 border border-amber-300 text-amber-900 flex items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-warning shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
             <div>
               <strong className="text-sm font-semibold block">
                 Telegram Rate Limit (Flood Wait)
@@ -218,7 +217,7 @@ export function ProgressView() {
       )}
 
       {/* Active Run Card */}
-      <Card className="mb-6 bg-surface border-border shadow-xs p-6">
+      <Card className="mb-6 bg-surface border-border p-6">
         {/* Progress Bar & Current Operation */}
         <div className="mb-4">
           <div className="flex items-center justify-between text-xs font-semibold mb-2">
@@ -232,7 +231,7 @@ export function ProgressView() {
         {!isFinished && progress.currentItem && (
           <div className="p-3 rounded-control bg-surface-muted border border-border flex items-center justify-between gap-3 text-xs mb-4">
             <div className="flex items-center gap-2 truncate">
-              <span className="inline-block w-2 h-2 rounded-full bg-primary animate-ping" />
+              <span className="inline-block w-2 h-2 rounded-full bg-primary" />
               <span className="text-text-muted">Processing:</span>
               <strong className="text-text font-semibold truncate">
                 {progress.currentItem.name}
@@ -407,7 +406,7 @@ export function ProgressView() {
 
                     {res.reason && (
                       <span className="text-[11px] text-danger truncate">
-                        — {res.reason}
+                        : {res.reason}
                       </span>
                     )}
                   </div>

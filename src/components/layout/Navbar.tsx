@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { ShieldCheck, LogOut, Trash2, UserCheck, ChevronDown } from "lucide-react";
+import { ShieldCheck, LogOut, Trash2, UserCheck, ChevronDown } from "@/components/ui/Icons";
 import { getSessionState, subscribeSession, clearInMemorySession } from "@/lib/session/store";
 import { disconnectClient } from "@/lib/telegram/client";
 import { forgetDevice } from "@/lib/session/persist";
@@ -81,13 +81,13 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-surface/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-surface">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link
             href="/"
             className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
           >
-            <div className="w-8 h-8 rounded-control bg-primary text-white flex items-center justify-center font-bold text-sm shadow-xs group-hover:bg-primary-hover transition-colors">
+            <div className="w-8 h-8 rounded-control bg-primary text-white flex items-center justify-center font-bold text-sm group-hover:bg-primary-hover transition-colors">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div className="flex flex-col text-left">
@@ -99,6 +99,21 @@ export function Navbar() {
               </span>
             </div>
           </Link>
+
+          <nav className="hidden md:flex items-center gap-5 text-xs font-medium text-text-muted">
+            <Link href="/about" className="hover:text-text transition-colors">
+              About
+            </Link>
+            <Link href="/privacy" className="hover:text-text transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-text transition-colors">
+              Terms
+            </Link>
+            <Link href="/license" className="hover:text-text transition-colors">
+              License
+            </Link>
+          </nav>
 
           <div className="flex items-center gap-3">
             {session.isConnected && displayName ? (

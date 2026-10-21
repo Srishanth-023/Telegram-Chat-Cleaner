@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
-import { X, AlertCircle, CheckCircle, Info } from "lucide-react";
+import { X, AlertCircle, CheckCircle, Info } from "@/components/ui/Icons";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -48,7 +48,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             duration={5000}
             className={twMerge(
               clsx(
-                "group pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-card p-4 shadow-lg border transition-all select-none",
+                "group pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-card p-4 border transition-all select-none",
                 "bg-surface border-border text-text",
                 t.variant === "success" && "border-emerald-200 bg-emerald-50 text-emerald-900",
                 t.variant === "danger" && "border-red-200 bg-red-50 text-red-900",

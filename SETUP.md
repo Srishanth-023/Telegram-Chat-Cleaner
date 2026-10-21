@@ -4,7 +4,7 @@ This guide walks you through setting up, running locally, and building **Telegra
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure your machine has:
 
@@ -16,7 +16,7 @@ Before you begin, ensure your machine has:
 
 ---
 
-## 🔑 Step 1: Telegram API Credentials
+## Step 1: Telegram API Credentials
 
 Because Telegram Chat Cleaner connects directly from your browser to Telegram's MTProto servers via WebSocket, you need your own Telegram App API credentials:
 
@@ -38,7 +38,7 @@ Because Telegram Chat Cleaner connects directly from your browser to Telegram's 
 
 ---
 
-# 🚀 SET-UP (Separate Phase)
+# SET-UP (Separate Phase)
 
 Follow these steps to prepare your local development environment:
 
@@ -79,7 +79,7 @@ If all three commands exit with code `0`, your setup is complete and ready.
 
 ---
 
-# 💻 RUNNING LOCALLY (Development Mode)
+# RUNNING LOCALLY (Development Mode)
 
 ### 1. Start the Development Server
 
@@ -88,7 +88,7 @@ npm run dev
 ```
 
 The Next.js development server will start at:
-👉 **[http://localhost:3000](http://localhost:3000)**
+**[http://localhost:3000](http://localhost:3000)**
 
 ### 2. Using the Application
 
@@ -105,7 +105,7 @@ The Next.js development server will start at:
 
 ---
 
-# 🏗️ BUILD (Separate Phase)
+# BUILD (Separate Phase)
 
 Telegram Chat Cleaner is configured as a **100% static client-side export** (`output: 'export'` in `next.config.js`). It builds into pure static HTML, CSS, and JS bundles with zero server-side dependencies.
 
@@ -139,7 +139,7 @@ Open [http://localhost:3000](http://localhost:3000) to test the production bundl
 
 ---
 
-## 🌐 Deploying the Production Static Build
+## Deploying the Production Static Build
 
 The `./out` directory contains standard static files that can be deployed to any static host:
 
@@ -157,7 +157,7 @@ Security headers (`Content-Security-Policy`, `HSTS`, `X-Frame-Options`, `Referre
 
 ---
 
-## 🛠️ Summary of All Scripts
+## Summary of All Scripts
 
 | Command | Purpose |
 | :--- | :--- |

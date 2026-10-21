@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo } from "react";
-import { Shield, Crown, Archive, Bot, User, Users, Megaphone } from "lucide-react";
+import { Shield, Crown, Archive, Bot, User, Users, Megaphone } from "@/components/ui/Icons";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge } from "@/components/ui/Badge";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -21,14 +21,10 @@ function getDeterministicColor(str: string): { bg: string; text: string } {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   const palettes = [
-    { bg: "bg-blue-100", text: "text-blue-700" },
-    { bg: "bg-emerald-100", text: "text-emerald-700" },
-    { bg: "bg-indigo-100", text: "text-indigo-700" },
-    { bg: "bg-purple-100", text: "text-purple-700" },
-    { bg: "bg-pink-100", text: "text-pink-700" },
-    { bg: "bg-amber-100", text: "text-amber-700" },
-    { bg: "bg-teal-100", text: "text-teal-700" },
-    { bg: "bg-rose-100", text: "text-rose-700" },
+    { bg: "bg-slate-200", text: "text-slate-800" },
+    { bg: "bg-blue-100", text: "text-blue-800" },
+    { bg: "bg-slate-300", text: "text-slate-900" },
+    { bg: "bg-sky-100", text: "text-sky-800" },
   ];
   return palettes[Math.abs(hash) % palettes.length];
 }
@@ -122,7 +118,7 @@ export const ChatRow = memo(function ChatRow({
       {/* Avatar */}
       <div
         className={clsx(
-          "w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 select-none shadow-2xs",
+          "w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 select-none",
           color.bg,
           color.text
         )}

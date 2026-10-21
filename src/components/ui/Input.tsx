@@ -1,6 +1,7 @@
 import React from "react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { AlertTriangle } from "./Icons";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -45,7 +46,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
         {errorMessage ? (
           <p className="mt-1 text-xs text-danger font-medium flex items-center gap-1">
-            <span aria-hidden="true">⚠</span>
+            <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
             {errorMessage}
           </p>
         ) : helperText ? (

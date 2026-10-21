@@ -2,7 +2,7 @@
 
 import React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/Icons";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -25,7 +25,7 @@ export const Checkbox = React.forwardRef<
         id={checkboxId}
         className={twMerge(
           clsx(
-            "peer h-5 w-5 shrink-0 rounded-[4px] border border-border bg-surface shadow-xs transition-colors",
+            "peer h-5 w-5 shrink-0 rounded-[4px] border border-border bg-surface transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-white",

@@ -1,5 +1,5 @@
 import React from "react";
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/Icons";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

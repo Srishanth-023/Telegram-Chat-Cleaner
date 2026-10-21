@@ -14,7 +14,7 @@ import {
   Lock,
   CheckCircle2,
   Trash2,
-} from "lucide-react";
+} from "@/components/ui/Icons";
 import { Stepper, StepItem } from "@/components/ui/Stepper";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -313,7 +313,7 @@ export function ConnectStepperCard() {
 
   return (
     <div className="w-full max-w-xl mx-auto py-8 px-4">
-      <Card className="shadow-md border-border bg-surface text-left">
+      <Card className="border-border bg-surface text-left">
         {/* Header & Stepper */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-1">

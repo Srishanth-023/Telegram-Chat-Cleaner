@@ -22,7 +22,7 @@ export function ProofOfConcept() {
   };
 
   return (
-    <div className="p-4 border rounded-card bg-surface shadow-sm max-w-md mx-auto my-8">
+    <div className="p-4 border border-border rounded-card bg-surface max-w-md mx-auto my-8">
       <h2 className="text-lg font-semibold mb-2">Phase 1: GramJS Browser POC</h2>
       <p className="text-sm text-text-muted mb-4">{status}</p>
       <button

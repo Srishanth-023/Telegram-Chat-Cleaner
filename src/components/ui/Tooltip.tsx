@@ -24,7 +24,7 @@ export function Tooltip({ content, children, side = "top", align = "center" }: T
             sideOffset={4}
             className={twMerge(
               clsx(
-                "z-50 overflow-hidden rounded-control bg-text px-2.5 py-1 text-xs text-white shadow-md animate-in fade-in-0 zoom-in-95",
+                "z-50 overflow-hidden rounded-control bg-text px-2.5 py-1 text-xs text-white border border-slate-800 animate-in fade-in-0 zoom-in-95",
                 "max-w-xs text-center select-none leading-relaxed"
               )
             )}

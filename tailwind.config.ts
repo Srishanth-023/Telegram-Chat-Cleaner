@@ -37,11 +37,11 @@ const config: Config = {
         },
       },
       borderRadius: {
-        card: "12px",
-        control: "8px",
+        card: "4px",
+        control: "4px",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
+        sans: ["var(--font-sans)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
         mono: ["var(--font-jetbrains)", "monospace"],
       },
     },

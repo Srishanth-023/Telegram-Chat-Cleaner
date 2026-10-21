@@ -1,4 +1,4 @@
-# AGENTS.md — Development Guidelines for AI Agents
+# AGENTS.md: Development Guidelines for AI Agents
 
 Welcome, AI Agent. This document establishes the mandatory conventions, invariants, architectural rules, and commands for developing within the **Telegram Chat Cleaner** repository.
 

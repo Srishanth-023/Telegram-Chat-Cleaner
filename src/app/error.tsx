@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { AlertCircle, RefreshCw, Home } from "lucide-react";
+import { AlertCircle, RefreshCw, Home } from "@/components/ui/Icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -15,7 +15,7 @@ export default function ErrorBoundary({
 }) {
   return (
     <main className="flex-1 max-w-lg mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
-      <Card className="p-8 border-red-200 bg-surface shadow-md">
+      <Card className="p-8 border-red-200 bg-surface">
         <div className="w-12 h-12 rounded-full bg-danger-soft text-danger flex items-center justify-center mx-auto mb-4">
           <AlertCircle className="w-6 h-6" />
         </div>
