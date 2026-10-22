@@ -65,4 +65,29 @@ describe("ChatRow Component", () => {
     fireEvent.click(row);
     expect(onToggle).not.toHaveBeenCalled();
   });
+
+  it("extracts emoji initials safely without breaking surrogate pairs", () => {
+    const emojiChat: ChatItem = {
+      id: "200",
+      name: "🚀 Team Alpha 🎉",
+      kind: "group",
+      archived: false,
+      unreadCount: 0,
+      isOwner: false,
+      isProtected: false,
+      peer: {},
+    };
+
+    render(
+      <ChatRow
+        item={emojiChat}
+        isSelected={false}
+        onToggle={vi.fn()}
+        onRangeSelect={vi.fn()}
+      />
+    );
+
+    // Initial avatar should contain both valid emoji characters without surrogate corruption
+    expect(screen.getByText("🚀🎉")).toBeInTheDocument();
+  });
 });

@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
 import { clsx } from "clsx";
 
+const nameCollator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
+
 export function DashboardView() {
   const router = useRouter();
   const parentRef = useRef<HTMLDivElement>(null);
@@ -146,7 +148,7 @@ export function DashboardView() {
       if (sortField === "lastActivity") {
         comparison = (a.lastActivity || 0) - (b.lastActivity || 0);
       } else if (sortField === "name") {
-        comparison = a.name.localeCompare(b.name);
+        comparison = nameCollator.compare(a.name, b.name);
       } else if (sortField === "kind") {
         comparison = a.kind.localeCompare(b.kind);
       }

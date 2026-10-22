@@ -95,9 +95,15 @@ export const useAppStore = create<AppStoreState>((set) => ({
   selectRange: (targetId, currentFilteredIds) =>
     set((state) => {
       const next = new Set(state.selectedIds);
+      const protectedSet = new Set<string>();
+      for (let i = 0; i < state.chats.length; i++) {
+        if (state.chats[i].isProtected) {
+          protectedSet.add(state.chats[i].id);
+        }
+      }
+
       if (!state.lastSelectedId || !currentFilteredIds.includes(state.lastSelectedId)) {
-        const chat = state.chats.find((c) => c.id === targetId);
-        if (!chat?.isProtected) next.add(targetId);
+        if (!protectedSet.has(targetId)) next.add(targetId);
         return { selectedIds: next, lastSelectedId: targetId };
       }
 
@@ -107,8 +113,7 @@ export const useAppStore = create<AppStoreState>((set) => ({
 
       for (let i = from; i <= to; i++) {
         const id = currentFilteredIds[i];
-        const chat = state.chats.find((c) => c.id === id);
-        if (chat && !chat.isProtected) {
+        if (!protectedSet.has(id)) {
           next.add(id);
         }
       }
@@ -119,9 +124,15 @@ export const useAppStore = create<AppStoreState>((set) => ({
   selectAllFiltered: (filteredIds) =>
     set((state) => {
       const next = new Set(state.selectedIds);
-      for (const id of filteredIds) {
-        const chat = state.chats.find((c) => c.id === id);
-        if (chat && !chat.isProtected) {
+      const protectedSet = new Set<string>();
+      for (let i = 0; i < state.chats.length; i++) {
+        if (state.chats[i].isProtected) {
+          protectedSet.add(state.chats[i].id);
+        }
+      }
+      for (let i = 0; i < filteredIds.length; i++) {
+        const id = filteredIds[i];
+        if (!protectedSet.has(id)) {
           next.add(id);
         }
       }

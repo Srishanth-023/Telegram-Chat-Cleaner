@@ -121,7 +121,10 @@ export async function fetchAllDialogs(
       }
     }
   } catch (err) {
-    // If folder 0 iteration fails or is partially complete, keep what we have
+    // If folder 0 iteration fails before yielding any dialogs, rethrow so callers detect real error
+    if (itemsMap.size === 0) {
+      throw err;
+    }
   }
 
   // 2. Fetch archived dialogs (folder 1)
@@ -134,8 +137,8 @@ export async function fetchAllDialogs(
         onProgress?.(totalLoaded);
       }
     }
-  } catch (err) {
-    // If folder 1 iteration fails, continue with loaded items
+  } catch {
+    // If folder 1 iteration fails, continue with loaded items from folder 0
   }
 
   return Array.from(itemsMap.values());

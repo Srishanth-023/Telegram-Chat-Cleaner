@@ -97,4 +97,36 @@ describe("Dialog Normalization and Classification", () => {
     expect(channelItem.kind).toBe("channel");
     expect(channelItem.isOwner).toBe(true);
   });
+
+  it("handles Unicode emojis and special characters in displayName safely", () => {
+    const emojiDialog: any = {
+      id: { toString: () => "33333" },
+      name: "🚀 Team Rocket 🎉",
+      isUser: true,
+      entity: { className: "User", id: { toString: () => "33333" }, bot: false },
+    };
+
+    const item = classifyDialog(emojiDialog);
+    expect(item.name).toBe("🚀 Team Rocket 🎉");
+  });
+
+  it("fetchAllDialogs rethrows error when folder 0 fails before yielding items", async () => {
+    const { fetchAllDialogs } = await import("./dialogs");
+    const mockClient = {
+      getMe: () => Promise.resolve({ id: "999" }),
+      iterDialogs: () => {
+        return {
+          [Symbol.asyncIterator]() {
+            return {
+              next() {
+                return Promise.reject(new Error("FLOOD_WAIT_30"));
+              },
+            };
+          },
+        };
+      },
+    } as any;
+
+    await expect(fetchAllDialogs(mockClient)).rejects.toThrow("FLOOD_WAIT_30");
+  });
 });

@@ -32,8 +32,13 @@ function getDeterministicColor(str: string): { bg: string; text: string } {
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  if (parts.length === 1) {
+    const chars = Array.from(parts[0]);
+    return chars.slice(0, 2).join("").toUpperCase();
+  }
+  const first = Array.from(parts[0])[0] || "";
+  const last = Array.from(parts[parts.length - 1])[0] || "";
+  return (first + last).toUpperCase();
 }
 
 function formatLastActivity(unixSeconds?: number): string {

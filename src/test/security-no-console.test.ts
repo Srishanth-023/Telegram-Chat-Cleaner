@@ -37,4 +37,10 @@ describe("Security check: No console.* calls in telegram or session modules", ()
     const violations = checkDirForConsole(sessionDir);
     expect(violations).toEqual([]);
   });
+
+  it("ensures zero console logging in components", () => {
+    const componentsDir = path.resolve(__dirname, "../components");
+    const violations = checkDirForConsole(componentsDir);
+    expect(violations).toEqual([]);
+  });
 });
