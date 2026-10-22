@@ -49,7 +49,7 @@ This document records all architectural choices, assumptions, and deviations fro
 
 ## 3. Typings Verification vs Prompt Specification
 - GramJS API methods were cross-referenced with `node_modules/telegram/tl/api.d.ts`:
-  - `Api.messages.DeleteHistory`: accepts `{ peer, maxId, revoke: false, justClear }` and returns `messages.AffectedHistory` with `offset: number` for iterative draining.
+  - `Api.messages.DeleteHistory`: accepts `{ peer, maxId: 2147483647, revoke: false, justClear }` and returns `messages.AffectedHistory` with `offset: number` for iterative draining. Note: `maxId` is set to `2147483647` (largest 32-bit int) because Telegram MTProto treats `max_id` as an upper-bound boundary (`id <= max_id`). Passing `0` targets messages with `id <= 0`, which matched zero messages and resulted in a server no-op.
   - `Api.messages.DeleteChatUser`: accepts `{ chatId, userId: 'me', revokeHistory: false }` and returns `Api.TypeUpdates`.
   - `Api.channels.LeaveChannel`: accepts `{ channel }` and returns `Api.TypeUpdates`.
   - `Api.auth.LogOut`: accepts no arguments and logs out the current session.

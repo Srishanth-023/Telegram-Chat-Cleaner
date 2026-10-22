@@ -32,7 +32,7 @@ import { clsx } from "clsx";
 
 export function ProgressView() {
   const router = useRouter();
-  const { chats, selectedIds, clearSelection } = useAppStore();
+  const { chats, setChats, selectedIds, clearSelection } = useAppStore();
 
   const [progress, setProgress] = useState<QueueProgress>(removalQueue.getProgress());
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -191,6 +191,15 @@ export function ProgressView() {
   };
 
   const handleBackToDashboard = () => {
+    const successfulIds = new Set<string>();
+    progress.results.forEach((res) => {
+      if (res.status === "success") {
+        successfulIds.add(res.id);
+      }
+    });
+    if (successfulIds.size > 0) {
+      setChats(chats.filter((c) => !successfulIds.has(c.id)));
+    }
     clearSelection();
     router.push("/dashboard");
   };

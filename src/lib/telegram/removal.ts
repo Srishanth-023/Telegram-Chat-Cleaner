@@ -4,17 +4,19 @@ import bigInt from "big-integer";
 import type { ChatItem } from "./dialogs";
 import { requireClient } from "./client";
 
+export const MAX_TELEGRAM_MSG_ID = 2147483647; // 2^31 - 1, largest 32-bit signed int ensuring all messages are deleted
+
 export interface RemovalRequestBuilder {
-  buildPrivateDeleteRequest(peer: unknown): Api.messages.DeleteHistory;
+  buildPrivateDeleteRequest(peer: unknown, maxId?: number): Api.messages.DeleteHistory;
   buildBasicGroupDeleteRequest(chatId: string): Api.messages.DeleteChatUser;
   buildChannelLeaveRequest(channel: unknown): Api.channels.LeaveChannel;
 }
 
 export const removalRequestBuilder: RemovalRequestBuilder = {
-  buildPrivateDeleteRequest(peer: unknown): Api.messages.DeleteHistory {
+  buildPrivateDeleteRequest(peer: unknown, maxId: number = MAX_TELEGRAM_MSG_ID): Api.messages.DeleteHistory {
     return new Api.messages.DeleteHistory({
       peer: peer as Api.TypeEntityLike,
-      maxId: 0,
+      maxId,
       revoke: false, // CRITICAL: Never delete for the other party
     });
   },
@@ -81,7 +83,15 @@ export async function removeChatItem(
     }
   } else if (item.kind === "supergroup" || item.kind === "channel") {
     // Leave supergroup or broadcast channel
-    const leaveChannelReq = removalRequestBuilder.buildChannelLeaveRequest(item.peer);
-    await client.invoke(leaveChannelReq);
+    try {
+      const leaveChannelReq = removalRequestBuilder.buildChannelLeaveRequest(item.peer);
+      await client.invoke(leaveChannelReq);
+    } catch (err: unknown) {
+      // If user is already not a participant or channel is private/inaccessible, gracefully complete
+      const msg = err && typeof err === "object" && "errorMessage" in err ? String((err as any).errorMessage) : "";
+      if (msg !== "USER_NOT_PARTICIPANT" && msg !== "CHANNEL_PRIVATE") {
+        throw err;
+      }
+    }
   }
 }

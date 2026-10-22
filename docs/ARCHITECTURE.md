@@ -109,7 +109,7 @@ flowchart TD
     CheckCancelled -- No --> FetchNext[Pick Next Chat Item]
     FetchNext --> InspectKind{Chat Kind}
 
-    InspectKind -- Private or Bot --> DelHistory[Api.messages.DeleteHistory<br/>revoke: false, maxId: 0]
+    InspectKind -- Private or Bot --> DelHistory[Api.messages.DeleteHistory<br/>revoke: false, maxId: 2147483647]
     InspectKind -- Basic Group --> DelGroup[Api.messages.DeleteChatUser<br/>userId: 'me', revokeHistory: false<br/>+ DeleteHistory]
     InspectKind -- Supergroup or Channel --> LeaveChan[Api.channels.LeaveChannel<br/>channel: peer]
 

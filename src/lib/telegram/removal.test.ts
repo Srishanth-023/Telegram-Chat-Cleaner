@@ -3,10 +3,10 @@ import { removalRequestBuilder, removeChatItem } from "./removal";
 import type { ChatItem } from "./dialogs";
 
 describe("Removal Safety & Revoke Invariant", () => {
-  it("buildPrivateDeleteRequest ALWAYS sets revoke: false", () => {
+  it("buildPrivateDeleteRequest ALWAYS sets revoke: false and targets all messages", () => {
     const req = removalRequestBuilder.buildPrivateDeleteRequest({ id: "123" });
     expect(req.revoke).toBe(false);
-    expect(req.maxId).toBe(0);
+    expect(req.maxId).toBe(2147483647);
   });
 
   it("buildBasicGroupDeleteRequest ALWAYS sets revokeHistory: false", () => {
