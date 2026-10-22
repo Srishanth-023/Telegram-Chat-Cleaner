@@ -75,4 +75,43 @@ describe("RemovalQueue Engine", () => {
     queue.pause();
     expect(queue.getProgress().state).toBe("idle"); // Not running yet
   });
+
+  it("resets queue state and results completely", async () => {
+    vi.spyOn(removalMod, "removeChatItem").mockResolvedValue(undefined);
+
+    const items: ChatItem[] = [
+      { id: "1", name: "Chat 1", kind: "private", archived: false, unreadCount: 0, isOwner: false, isProtected: false, peer: {} },
+    ];
+
+    await queue.start(items);
+    expect(queue.getProgress().state).toBe("completed");
+
+    queue.reset();
+    const progress = queue.getProgress();
+    expect(progress.state).toBe("idle");
+    expect(progress.completed).toBe(0);
+    expect(progress.successful).toBe(0);
+    expect(progress.results).toHaveLength(0);
+  });
+
+  it("handles consecutive removal runs without error", async () => {
+    vi.spyOn(removalMod, "removeChatItem").mockResolvedValue(undefined);
+
+    const batch1: ChatItem[] = [
+      { id: "1", name: "Chat 1", kind: "private", archived: false, unreadCount: 0, isOwner: false, isProtected: false, peer: {} },
+    ];
+    await queue.start(batch1);
+    expect(queue.getProgress().state).toBe("completed");
+    expect(queue.getProgress().successful).toBe(1);
+
+    queue.reset();
+
+    const batch2: ChatItem[] = [
+      { id: "2", name: "Chat 2", kind: "private", archived: false, unreadCount: 0, isOwner: false, isProtected: false, peer: {} },
+    ];
+    await queue.start(batch2);
+    expect(queue.getProgress().state).toBe("completed");
+    expect(queue.getProgress().successful).toBe(1);
+    expect(queue.getProgress().results[0].id).toBe("2");
+  });
 });

@@ -2,10 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getSessionState, touchActivity, clearInMemorySession } from "./store";
-import { disconnectClient } from "../telegram/client";
-import { forgetDevice } from "./persist";
-import { useAppStore } from "../store";
+import { getSessionState, touchActivity } from "./store";
+import { performLogout } from "./logout";
 import { useToast } from "@/components/ui/Toast";
 
 const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
@@ -15,7 +13,6 @@ export function useInactivityTimeout() {
   const router = useRouter();
   const { toast } = useToast();
   const warningShownRef = useRef(false);
-  const resetAllStore = useAppStore((s) => s.resetAll);
 
   useEffect(() => {
     const handleUserInteraction = () => {
@@ -46,19 +43,12 @@ export function useInactivityTimeout() {
 
       if (elapsed >= INACTIVITY_TIMEOUT_MS) {
         warningShownRef.current = false;
-        try {
-          await disconnectClient();
-          await forgetDevice();
-        } catch {
-          // ignore
-        }
-        clearInMemorySession();
-        resetAllStore();
+        await performLogout({ revokeTelegramSession: false });
 
         toast({
-          title: "Session Terminated",
+          title: "Session Timed Out",
           description: "Disconnected due to 15 minutes of inactivity. All memory data cleared.",
-          variant: "danger",
+          variant: "warning",
         });
 
         router.push("/connect");
@@ -73,5 +63,5 @@ export function useInactivityTimeout() {
       window.removeEventListener("scroll", handleUserInteraction);
       clearInterval(interval);
     };
-  }, [router, toast, resetAllStore]);
+  }, [router, toast]);
 }

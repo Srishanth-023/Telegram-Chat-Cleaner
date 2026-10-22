@@ -19,9 +19,7 @@ import {
 } from "@/components/ui/Icons";
 import { useAppStore } from "@/lib/store";
 import { removalQueue, QueueProgress } from "@/lib/telegram/queue";
-import { disconnectClient } from "@/lib/telegram/client";
-import { forgetDevice } from "@/lib/session/persist";
-import { clearInMemorySession } from "@/lib/session/store";
+import { performLogout } from "@/lib/session/logout";
 import { isAuthenticated } from "@/lib/security/guards";
 import { getClient } from "@/lib/telegram/client";
 import { Card } from "@/components/ui/Card";
@@ -37,6 +35,7 @@ export function ProgressView() {
   const [progress, setProgress] = useState<QueueProgress>(removalQueue.getProgress());
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const wakeLockRef = useRef<any>(null);
+  const hasStartedRef = useRef(false);
 
   // Re-read selected items from store
   const selectedChats = useMemo(() => {
@@ -148,8 +147,13 @@ export function ProgressView() {
       setProgress(newProgress);
     });
 
-    // Start queue if idle and there are items
-    if (removalQueue.getProgress().state === "idle" && selectedChats.length > 0) {
+    const qState = removalQueue.getProgress().state;
+    // Start queue if we haven't started on this mount and have items to process
+    if (!hasStartedRef.current && selectedChats.length > 0 && qState !== "running" && qState !== "paused") {
+      hasStartedRef.current = true;
+      if (qState !== "idle") {
+        removalQueue.reset();
+      }
       removalQueue.start(selectedChats).catch(() => {});
     }
 
@@ -201,27 +205,17 @@ export function ProgressView() {
       setChats(chats.filter((c) => !successfulIds.has(c.id)));
     }
     clearSelection();
+    removalQueue.reset();
     router.push("/dashboard");
   };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const client = getClient();
-      if (client && client.connected) {
-        try {
-          const { Api } = await import("telegram");
-          await client.invoke(new Api.auth.LogOut());
-        } catch {
-          // Ignore
-        }
-      }
-      await disconnectClient();
-      await forgetDevice();
-      clearInMemorySession();
-      router.push("/connect");
+      await performLogout({ revokeTelegramSession: true });
     } finally {
       setIsLoggingOut(false);
+      router.push("/connect");
     }
   };
 

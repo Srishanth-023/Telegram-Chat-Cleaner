@@ -5,11 +5,8 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import { ShieldCheck, LogOut, Trash2, UserCheck, ChevronDown } from "@/components/ui/Icons";
-import { getSessionState, subscribeSession, clearInMemorySession } from "@/lib/session/store";
-import { disconnectClient } from "@/lib/telegram/client";
-import { forgetDevice } from "@/lib/session/persist";
-import { getClient } from "@/lib/telegram/client";
-import { useAppStore } from "@/lib/store";
+import { getSessionState, subscribeSession } from "@/lib/session/store";
+import { performLogout } from "@/lib/session/logout";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/Dialog";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
@@ -23,7 +20,6 @@ export function Navbar() {
   const [session, setSession] = useState(getSessionState());
   const [isDisconnectOpen, setIsDisconnectOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const resetAllStore = useAppStore((s) => s.resetAll);
 
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const lastScrollY = React.useRef(0);
@@ -65,16 +61,8 @@ export function Navbar() {
 
   const handleDisconnectOnly = async () => {
     try {
-      await disconnectClient();
-      await forgetDevice();
-      clearInMemorySession();
-      resetAllStore();
-      setIsDisconnectOpen(false);
-      router.push("/connect");
-    } catch {
-      // Complete cleanup regardless
-      clearInMemorySession();
-      resetAllStore();
+      await performLogout({ revokeTelegramSession: false });
+    } finally {
       setIsDisconnectOpen(false);
       router.push("/connect");
     }
@@ -83,23 +71,11 @@ export function Navbar() {
   const handleFullTelegramLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const client = getClient();
-      if (client && client.connected) {
-        try {
-          const { Api } = await import("telegram");
-          await client.invoke(new Api.auth.LogOut());
-        } catch {
-          // Ignore RPC logout error if session already revoked
-        }
-      }
-      await disconnectClient();
-      await forgetDevice();
-      clearInMemorySession();
-      resetAllStore();
-      setIsDisconnectOpen(false);
-      router.push("/connect");
+      await performLogout({ revokeTelegramSession: true });
     } finally {
       setIsLoggingOut(false);
+      setIsDisconnectOpen(false);
+      router.push("/connect");
     }
   };
 

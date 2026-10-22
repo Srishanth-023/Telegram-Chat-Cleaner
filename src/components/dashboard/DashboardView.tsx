@@ -67,14 +67,19 @@ export function DashboardView() {
   }, [searchInput, setSearchQuery]);
 
   const loadConversations = useCallback(async () => {
+    if (!isAuthenticated()) {
+      return;
+    }
     setIsLoadingChats(true);
     setChatsError(null);
     setLoadProgress(0);
 
     try {
       const client = getClient();
-      if (!client) {
-        router.push("/connect");
+      if (!client || !client.connected) {
+        if (!isAuthenticated()) {
+          router.push("/connect");
+        }
         return;
       }
       const loaded = await fetchAllDialogs(client, (count) => {
@@ -82,6 +87,9 @@ export function DashboardView() {
       });
       setChats(loaded);
     } catch (err: unknown) {
+      if (!isAuthenticated()) {
+        return;
+      }
       const friendly = mapTelegramError(err);
       setChatsError(friendly);
     } finally {

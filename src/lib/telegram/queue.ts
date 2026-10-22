@@ -270,6 +270,25 @@ export class RemovalQueue {
     this.notify();
   }
 
+  public reset(): void {
+    if (this.isProcessing) {
+      this.cancel();
+    }
+    this.items = [];
+    this.results.clear();
+    this.currentIndex = 0;
+    this.state = "idle";
+    this.isProcessing = false;
+    this.currentWaitSeconds = 0;
+    this.abortController = null;
+    this.pausePromise = null;
+    if (this.waitIntervalTimer) {
+      clearInterval(this.waitIntervalTimer);
+      this.waitIntervalTimer = null;
+    }
+    this.notify();
+  }
+
   public async retryFailed(): Promise<void> {
     const failedItems = this.items.filter((item) => {
       const res = this.results.get(item.id);

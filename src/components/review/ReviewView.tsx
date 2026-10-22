@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/Icons";
 import { useAppStore } from "@/lib/store";
 import { isAuthenticated } from "@/lib/security/guards";
+import { removalQueue } from "@/lib/telegram/queue";
 import type { ChatItem, ChatKind } from "@/lib/telegram/dialogs";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -94,6 +95,7 @@ export function ReviewView() {
 
   const handleStartRemoval = () => {
     if (!isConfirmationSatisfied) return;
+    removalQueue.reset();
     router.push("/progress");
   };
 
