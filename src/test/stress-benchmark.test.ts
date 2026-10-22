@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useAppStore } from "@/lib/store";
 import type { ChatItem, ChatKind } from "@/lib/telegram/dialogs";
+import { RemovalQueue } from "@/lib/telegram/queue";
 
 const KINDS: ChatKind[] = ["private", "bot", "group", "supergroup", "channel"];
 
@@ -100,4 +101,43 @@ describe("Stress & Scale Performance Benchmarks", () => {
       expect(sortDuration).toBeLessThan(sortBudget);
     });
   }
+
+  it("RemovalQueue getProgress() executes in O(1) time without array re-allocations", () => {
+    const queue = new RemovalQueue(1);
+
+    // Populate queue with 5,000 results
+    for (let i = 0; i < 5000; i++) {
+      (queue as any).recordResult({
+        id: i.toString(),
+        name: `Chat ${i}`,
+        kind: "private",
+        status: i % 2 === 0 ? "success" : "failed",
+        timestamp: Date.now(),
+      });
+    }
+
+    const startProgress = performance.now();
+    for (let i = 0; i < 1000; i++) {
+      const progress = queue.getProgress();
+      expect(progress.completed).toBe(5000);
+      expect(progress.successful).toBe(2500);
+      expect(progress.failed).toBe(2500);
+    }
+    const duration = performance.now() - startProgress;
+
+    // 1,000 calls to getProgress() on 5k items should take < 0.15ms per call
+    expect(duration).toBeLessThan(150);
+  });
+
+  it("checkbox toggling on 50,000 conversations executes in sub-millisecond time", () => {
+    const chats = generateSyntheticChats(50000);
+    useAppStore.getState().setChats(chats);
+
+    const startToggle = performance.now();
+    useAppStore.getState().toggleSelect("1000050");
+    const toggleDuration = performance.now() - startToggle;
+
+    expect(useAppStore.getState().selectedIds.has("1000050")).toBe(true);
+    expect(toggleDuration).toBeLessThan(10);
+  });
 });

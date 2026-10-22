@@ -171,6 +171,7 @@ export function DashboardView() {
   const selectedCount = selectedIds.size;
   const isAllFilteredSelected =
     filteredSelectableIds.length > 0 &&
+    selectedIds.size >= filteredSelectableIds.length &&
     filteredSelectableIds.every((id) => selectedIds.has(id));
 
   const handleSelectAllToggle = () => {

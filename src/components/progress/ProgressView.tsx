@@ -42,6 +42,12 @@ export function ProgressView() {
     return chats.filter((c) => selectedIds.has(c.id) && !c.isProtected);
   }, [chats, selectedIds]);
 
+  const displayResults = useMemo(() => {
+    return progress.results.length > 100
+      ? progress.results.slice(-100)
+      : progress.results;
+  }, [progress.results]);
+
   // Screen Wake Lock helper
   const acquireWakeLock = async () => {
     try {
@@ -500,7 +506,9 @@ export function ProgressView() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-text">
               Activity Log ({progress.results.length})
             </h2>
-            <span className="text-[11px] text-text-muted">Live event stream</span>
+            <span className="text-[11px] text-text-muted">
+              {progress.results.length > 100 ? `Latest 100 events • ` : ""}Live event stream
+            </span>
           </div>
 
           <Card className="p-0 overflow-hidden border-border bg-surface">
@@ -510,7 +518,7 @@ export function ProgressView() {
                   Waiting for first operation to execute...
                 </div>
               ) : (
-                progress.results.map((res) => (
+                displayResults.map((res) => (
                   <div
                     key={res.id}
                     className="px-3.5 py-2.5 flex items-center justify-between gap-2.5 hover:bg-surface-muted/30 transition-colors min-h-[44px]"

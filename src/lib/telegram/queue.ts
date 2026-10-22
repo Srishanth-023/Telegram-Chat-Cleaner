@@ -34,7 +34,7 @@ export class RemovalQueue {
   private items: ChatItem[] = [];
   private results: Map<string, ItemResult> = new Map();
   private currentIndex = 0;
-  private delayMs = 400;
+  private delayMs = 250;
   private abortController: AbortController | null = null;
   private pausePromise: { promise: Promise<void>; resolve: () => void } | null = null;
   private listeners = new Set<QueueListener>();
@@ -42,7 +42,13 @@ export class RemovalQueue {
   private currentWaitSeconds = 0;
   private isProcessing = false;
 
-  constructor(delayMs = 400) {
+  // O(1) Running Counters & Cached Results Array
+  private successfulCount = 0;
+  private failedCount = 0;
+  private skippedCount = 0;
+  private cachedResultsArray: ItemResult[] = [];
+
+  constructor(delayMs = 250) {
     this.delayMs = delayMs;
   }
 
@@ -59,17 +65,15 @@ export class RemovalQueue {
     }
   }
 
+  private recordResult(result: ItemResult): void {
+    this.results.set(result.id, result);
+    this.cachedResultsArray.push(result);
+    if (result.status === "success") this.successfulCount++;
+    else if (result.status === "failed") this.failedCount++;
+    else if (result.status === "skipped") this.skippedCount++;
+  }
+
   public getProgress(): QueueProgress {
-    let successful = 0;
-    let failed = 0;
-    let skipped = 0;
-
-    for (const res of this.results.values()) {
-      if (res.status === "success") successful++;
-      else if (res.status === "failed") failed++;
-      else if (res.status === "skipped") skipped++;
-    }
-
     const currentItem =
       this.state === "running" && this.currentIndex < this.items.length
         ? this.items[this.currentIndex]
@@ -78,13 +82,13 @@ export class RemovalQueue {
     return {
       state: this.state,
       total: this.items.length,
-      completed: successful + failed + skipped,
-      successful,
-      failed,
-      skipped,
+      completed: this.successfulCount + this.failedCount + this.skippedCount,
+      successful: this.successfulCount,
+      failed: this.failedCount,
+      skipped: this.skippedCount,
       currentItem,
       remainingSecondsWait: this.currentWaitSeconds > 0 ? this.currentWaitSeconds : undefined,
-      results: Array.from(this.results.values()),
+      results: this.cachedResultsArray,
     };
   }
 
@@ -95,6 +99,10 @@ export class RemovalQueue {
 
     this.items = [...items];
     this.results.clear();
+    this.successfulCount = 0;
+    this.failedCount = 0;
+    this.skippedCount = 0;
+    this.cachedResultsArray = [];
     this.currentIndex = 0;
     this.state = "running";
     this.abortController = new AbortController();
@@ -131,7 +139,7 @@ export class RemovalQueue {
         this.notify();
 
         if (item.isProtected) {
-          this.results.set(item.id, {
+          this.recordResult({
             id: item.id,
             name: item.name,
             kind: item.kind,
@@ -154,7 +162,7 @@ export class RemovalQueue {
           try {
             await removeChatItem(item);
             itemSucceeded = true;
-            this.results.set(item.id, {
+            this.recordResult({
               id: item.id,
               name: item.name,
               kind: item.kind,
@@ -179,7 +187,7 @@ export class RemovalQueue {
             }
 
             if (attempts >= maxRetriesPerItem) {
-              this.results.set(item.id, {
+              this.recordResult({
                 id: item.id,
                 name: item.name,
                 kind: item.kind,
@@ -276,6 +284,10 @@ export class RemovalQueue {
     }
     this.items = [];
     this.results.clear();
+    this.successfulCount = 0;
+    this.failedCount = 0;
+    this.skippedCount = 0;
+    this.cachedResultsArray = [];
     this.currentIndex = 0;
     this.state = "idle";
     this.isProcessing = false;

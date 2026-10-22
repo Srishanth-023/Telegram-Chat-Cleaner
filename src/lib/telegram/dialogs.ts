@@ -2,6 +2,7 @@ import type { Api } from "telegram";
 import type { TelegramClient } from "telegram";
 import type { Dialog } from "telegram/tl/custom/dialog";
 import { requireClient } from "./client";
+import { getSessionState } from "../session/store";
 
 export type ChatKind = "private" | "bot" | "group" | "supergroup" | "channel";
 
@@ -96,50 +97,60 @@ export async function fetchAllDialogs(
 ): Promise<ChatItem[]> {
   const activeClient = client || requireClient();
 
-  // Retrieve current user ID to accurately mark Saved Messages
-  let myId: string | undefined;
-  try {
-    const me = await activeClient.getMe();
-    if (me && "id" in me) {
-      myId = me.id?.toString();
+  // Retrieve current user ID from in-memory session or query if not yet stored
+  let myId: string | undefined = getSessionState().user?.id;
+  if (!myId) {
+    try {
+      const me = await activeClient.getMe();
+      if (me && "id" in me) {
+        myId = me.id?.toString();
+      }
+    } catch {
+      // If getMe fails, continue without exact myId
     }
-  } catch {
-    // If getMe fails, continue without exact myId
   }
 
   const itemsMap = new Map<string, ChatItem>();
   let totalLoaded = 0;
+  let lastReported = 0;
+  let lastReportTime = 0;
 
-  // 1. Fetch main dialogs (folder 0)
-  try {
-    for await (const dialog of activeClient.iterDialogs({ folder: 0 })) {
-      const item = classifyDialog(dialog, myId, false);
-      if (item.id && !itemsMap.has(item.id)) {
-        itemsMap.set(item.id, item);
-        totalLoaded++;
-        onProgress?.(totalLoaded);
+  const reportProgress = (force = false) => {
+    const now = Date.now();
+    if (force || totalLoaded - lastReported >= 20 || now - lastReportTime >= 80) {
+      lastReported = totalLoaded;
+      lastReportTime = now;
+      onProgress?.(totalLoaded);
+    }
+  };
+
+  const fetchFolder = async (folderId: number, isArchived: boolean): Promise<void> => {
+    try {
+      for await (const dialog of activeClient.iterDialogs({ folder: folderId })) {
+        const item = classifyDialog(dialog, myId, isArchived);
+        if (item.id && !itemsMap.has(item.id)) {
+          itemsMap.set(item.id, item);
+          totalLoaded++;
+          reportProgress();
+        }
+      }
+    } catch (err) {
+      if (folderId === 0 && itemsMap.size === 0) {
+        throw err;
       }
     }
-  } catch (err) {
-    // If folder 0 iteration fails before yielding any dialogs, rethrow so callers detect real error
-    if (itemsMap.size === 0) {
-      throw err;
-    }
+  };
+
+  // Fetch Main (0) and Archived (1) concurrently over multiplexed WebSocket connection
+  const [folder0Result] = await Promise.allSettled([
+    fetchFolder(0, false),
+    fetchFolder(1, true),
+  ]);
+
+  if (folder0Result.status === "rejected" && itemsMap.size === 0) {
+    throw folder0Result.reason;
   }
 
-  // 2. Fetch archived dialogs (folder 1)
-  try {
-    for await (const dialog of activeClient.iterDialogs({ folder: 1 })) {
-      const item = classifyDialog(dialog, myId, true);
-      if (item.id && !itemsMap.has(item.id)) {
-        itemsMap.set(item.id, item);
-        totalLoaded++;
-        onProgress?.(totalLoaded);
-      }
-    }
-  } catch {
-    // If folder 1 iteration fails, continue with loaded items from folder 0
-  }
-
+  reportProgress(true);
   return Array.from(itemsMap.values());
 }
