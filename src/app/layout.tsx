@@ -5,6 +5,7 @@ import { HttpsWarningBanner } from "@/components/layout/HttpsWarningBanner";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
+import { FlyingTelegramRocket } from "@/components/ui/FlyingTelegramRocket";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
           <Navbar />
           <div className="flex-1 flex flex-col">{children}</div>
           <Footer />
+          <FlyingTelegramRocket />
         </ToastProvider>
       </body>
     </html>
